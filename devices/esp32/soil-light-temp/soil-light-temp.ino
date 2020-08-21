@@ -1,0 +1,276 @@
+#include <PCD8544.h>
+#include <Wire.h>
+#include <BH1750.h>
+#include <Adafruit_BME280.h>
+#include <OneWire.h>
+
+
+//// Nokia display ////
+/* Pinout:  SCK  18
+            MOSI 23
+            DC   19
+            RST  14
+            CS   5   */
+// Backlight pin
+#define BL 4
+static PCD8544 lcd;
+static const byte glyph[] = { 0x06, 0x09, 0x09, 0x06, 0x00 };  // degree sign
+const int buttonPin = 35; // sensor button
+bool backlight;
+
+//// Light sensors ////
+BH1750 bh1750_a;
+BH1750 bh1750_b;
+int light_level_a = 0;
+int light_level_b = 0;
+
+
+//// Soil Moisture Sensors ////
+// Sensor 1
+const int SMSensorPin1 = 15;
+const int AirValue1 = 3620;   //max value
+const int WaterValue1 = 1680;  //min value
+int soil_moisture_level_a = 0;
+// Sensor 2
+const int SMSensorPin2 = 27;
+const int AirValue2 = 3620;   //max value
+const int WaterValue2 = 1680;  //min value
+int soil_moisture_level_b = 0;
+
+
+//// BME280 ////
+Adafruit_BME280 bme; // I2C
+float bme_t = 0;
+int bme_p = 0;
+int bme_h = 0;
+
+
+//// DS18B20 ////
+OneWire ds(25);
+float DS18B20_t = 0;
+
+
+void setup() {
+    Serial.begin(115200);
+
+    // PCD8544-compatible display resolution...
+    lcd.begin(84, 48);
+
+    // Set backlight (LOW - ON, HIGH - OFF)
+    pinMode(BL, OUTPUT);
+    digitalWrite(BL, HIGH);
+    backlight = false;
+    pinMode(buttonPin, INPUT);
+
+    // Add the degree sigh to position "0" of the ASCII table...
+    lcd.createChar(0, glyph);
+
+    // Initialize the I2C bus and light sensors init
+    Wire.begin(21, 22);
+    bh1750_a.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire);
+    bh1750_b.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x5C, &Wire);
+
+    // bme280 init
+    bool bme280_status;
+    bme280_status = bme.begin(0x76);
+    if (!bme280_status) {
+        Serial.println("Could not find a valid BME280 sensor, check wiring!");
+        while (1);
+    }
+}
+
+
+// Get temperature from BME sensor
+float getBmeT(){
+    float result;
+    result = bme.readTemperature();
+    Serial.print("BME Temperature = ");
+    Serial.print(result);
+    Serial.println(" *C");
+    return result;
+}
+
+// Get pressure from BME sensor
+int getBmeP(){
+    float result;
+    result = bme.readPressure() / 100.0F * 0.75;
+    Serial.print("BME Pressure = ");
+    Serial.print(result);
+    Serial.println(" mmhg");
+    return int(result);
+}
+
+// Get humidity from BME sensor
+int getBmeH(){
+    float result;
+    result = bme.readHumidity();
+    Serial.print("Humidity = ");
+    Serial.print(result);
+    Serial.println(" %");
+    return int(result);
+}
+
+// Get light level form sensor 1
+int getL1(){
+    float result;
+    result = bh1750_a.readLightLevel();
+    Serial.print("Light Level 1 = ");
+    Serial.println(result);
+    return int(result);
+}
+
+// Get light level form sensor 2
+int getL2(){
+    float result;
+    result = bh1750_b.readLightLevel();
+    Serial.print("Light Level 2 = ");
+    Serial.println(result);
+    return int(result);
+}
+
+// Get soil moister level form sensor 1
+int getSM1(){
+    float result;
+    result = analogRead(SMSensorPin1);
+    Serial.print("Soil Moisture Level 1 = ");
+    Serial.print(result);
+    Serial.println(" V");
+    int result_per;
+    result_per = map(result, AirValue1, WaterValue1, 0, 100);
+    Serial.print("Soil Moisture Level 1 = ");
+    Serial.print(result_per);
+    Serial.println(" %");
+    return result_per;
+}
+
+// Get soil moister level form sensor 2
+int getSM2(){
+    float result;
+    result = analogRead(SMSensorPin2);
+    Serial.print("Soil Moisture Level 2 = ");
+    Serial.print(result);
+    Serial.println(" V");
+    int result_per;
+    result_per = map(result, AirValue2, WaterValue2, 0, 100);
+    Serial.print("Soil Moisture Level 2 = ");
+    Serial.print(result_per);
+    Serial.println(" %");
+    return result_per;
+}
+
+// Get temperature from DS18B20
+float getDS18B20T(){
+    byte i;
+    byte present = 0;
+    byte data[12];
+    byte addr[8];
+    float celsius;
+
+    Serial.println(ds.search(addr));
+
+    if ( !ds.search(addr)){
+        ds.reset_search();
+        delay(250);
+        for(byte i = 0; i < 10; i++) addr[i] = 0;
+        //return 0;
+    }
+
+    ds.reset();
+    ds.select(addr);
+    ds.write(0x44, 1); // start conversion, with parasite power on at the end
+    delay(1000);
+    present = ds.reset();
+    ds.select(addr);
+    ds.write(0xBE); // Read Scratchpad
+
+    for ( i = 0; i < 9; i++){
+        data[i] = ds.read();
+    }
+
+    // Convert the data to actual temperature
+    int16_t raw = (data[1] << 8) | data[0];
+    byte cfg = (data[4] & 0x60);
+    if (cfg == 0x00) raw = raw & ~7; // 9 bit resolution, 93.75 ms
+    else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
+    else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
+
+    celsius = (float)raw / 16.0;
+    Serial.print("DS18B20 Temperature = ");
+    Serial.print(celsius);
+    Serial.println(" *C ");
+    return celsius;
+}
+
+void loop() {
+    if (digitalRead(buttonPin)){
+        if (backlight == true){
+            digitalWrite(BL, HIGH);
+            backlight = false;
+        } else {
+            digitalWrite(BL, LOW);
+            backlight = true;
+        }
+    }
+
+
+    bme_t = getBmeT();
+    bme_p = getBmeP();
+    bme_h = getBmeH();
+    light_level_a = getL1();
+    light_level_b = getL2();
+    soil_moisture_level_a = getSM1();
+    soil_moisture_level_b = getSM2();
+    DS18B20_t = getDS18B20T();
+
+    // Display Line 1
+    lcd.setCursor(0, 0);
+    lcd.print("T in =");
+    lcd.print(bme_t, 1);
+    lcd.print(" ");
+    lcd.write(0); // degree sign
+    lcd.print("C");
+
+    // Display Line 2
+    lcd.setCursor(0, 1);
+    lcd.print("T out=");
+    lcd.print(DS18B20_t, 1);
+    lcd.print(" ");
+    lcd.write(0); // degree sign
+    lcd.print("C");
+
+    // Display Line 3
+    lcd.setCursor(0, 2);
+    lcd.print("P=");
+    lcd.print(bme_p);
+    lcd.print("mm");
+
+    lcd.setCursor(50, 2);
+    lcd.print("H=");
+    lcd.print(bme_h);
+    lcd.print("%");
+
+    // Display Line 4
+    lcd.setCursor(0, 3);
+    lcd.print("L1=");
+    lcd.print(light_level_a);
+    lcd.print(" lux");
+
+    // Display Line 5
+    lcd.setCursor(0, 4);
+    lcd.print("L2=");
+    lcd.print(light_level_b);
+    lcd.print(" lux");
+
+    // Display Line 6
+    lcd.setCursor(0, 5);
+    lcd.print("M1=");
+    lcd.print(soil_moisture_level_a);
+    lcd.print("% ");
+
+    lcd.setCursor(42, 5);
+    lcd.print("M2=");
+    lcd.print(soil_moisture_level_b);
+    lcd.print("%");
+
+    delay(1000);
+}
