@@ -3,6 +3,16 @@
 #include <BH1750.h>
 #include <Adafruit_BME280.h>
 #include <OneWire.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include "credentials.h"
+
+unsigned long timeing;
+int timedelta = 60000; // send data to broker every 1 min
+
+//// WiFi & MQTT
+WiFiClient espClient;
+PubSubClient client(espClient);
 
 
 //// Nokia display ////
@@ -23,35 +33,99 @@ BH1750 bh1750_a;
 BH1750 bh1750_b;
 int light_level_a = 0;
 int light_level_b = 0;
+char light_level_a_str[6];
+char light_level_b_str[6];
+
 
 
 //// Soil Moisture Sensors ////
 // Sensor 1
-const int SMSensorPin1 = 15;
-const int AirValue1 = 3620;   //max value
-const int WaterValue1 = 1680;  //min value
+const int SMSensorPin1 = 32;
+const int AirValue1 = 2550;   //max value   2531
+const int WaterValue1 = 2100;  //min value    2100
 int soil_moisture_level_a = 0;
-// Sensor 2
-const int SMSensorPin2 = 27;
-const int AirValue2 = 3620;   //max value
-const int WaterValue2 = 1680;  //min value
-int soil_moisture_level_b = 0;
+char soil_moisture_level_a_str[6];
 
+// Sensor 2
+const int SMSensorPin2 = 34;
+const int AirValue2 = 2400;   //max value  2481
+const int WaterValue2 = 1850;  //min value  1900
+int soil_moisture_level_b = 0;
+char soil_moisture_level_b_str[6];
 
 //// BME280 ////
 Adafruit_BME280 bme; // I2C
 float bme_t = 0;
 int bme_p = 0;
 int bme_h = 0;
+char bme_t_str[6];
+char bme_p_str[6];
+char bme_h_str[6];
 
 
 //// DS18B20 ////
 OneWire ds(25);
 float DS18B20_t = 0;
+char DS18B20_t_str[6];
+
+
+void setup_wifi() {
+  delay(10);
+  // We start by connecting to a WiFi network
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void callback(char* topic, byte* message, unsigned int length) {
+  return;
+}
+
+
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    if (client.connect("ESP32Client", mqtt_login, mqtt_pass)) {
+      Serial.println("connected");
+      // Subscribe
+      //client.subscribe("esp32/output");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
 
 
 void setup() {
     Serial.begin(115200);
+
+
+    // wifi
+    setup_wifi();
+    client.setServer(mqtt_server, 1883);
+    //client.setCallback(callback);
+
+
 
     // PCD8544-compatible display resolution...
     lcd.begin(84, 48);
@@ -77,7 +151,12 @@ void setup() {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");
         while (1);
     }
+
 }
+
+
+
+
 
 
 // Get temperature from BME sensor
@@ -166,8 +245,6 @@ float getDS18B20T(){
     byte addr[8];
     float celsius;
 
-    Serial.println(ds.search(addr));
-
     if ( !ds.search(addr)){
         ds.reset_search();
         delay(250);
@@ -202,6 +279,13 @@ float getDS18B20T(){
 }
 
 void loop() {
+    // connection
+    if (!client.connected()) {
+        reconnect();
+    }
+    client.loop();
+
+    // backlight button
     if (digitalRead(buttonPin)){
         if (backlight == true){
             digitalWrite(BL, HIGH);
@@ -212,7 +296,7 @@ void loop() {
         }
     }
 
-
+    // get data from sensors
     bme_t = getBmeT();
     bme_p = getBmeP();
     bme_h = getBmeH();
@@ -221,6 +305,45 @@ void loop() {
     soil_moisture_level_a = getSM1();
     soil_moisture_level_b = getSM2();
     DS18B20_t = getDS18B20T();
+
+    // send data to broker
+    if (millis() - timeing > timedelta){
+        Serial.println("*** Sending data to broker ***");
+        dtostrf(bme_t, 5, 1, bme_t_str);
+        dtostrf(bme_p, 3, 0, bme_p_str);
+        dtostrf(bme_h, 3, 0, bme_h_str);
+        dtostrf(DS18B20_t, 5, 1, DS18B20_t_str);
+        dtostrf(light_level_a, 5, 1, light_level_a_str);
+        dtostrf(light_level_b, 5, 1, light_level_b_str);
+
+        // get avarage voltage from soil moister sensors
+        int sml_avr_volt_a = 0;
+        for (int i=0; i < 10; i++){
+            sml_avr_volt_a = sml_avr_volt_a + analogRead(SMSensorPin1);
+        }
+        sml_avr_volt_a = sml_avr_volt_a/10;
+
+        int sml_avr_volt_b = 0;
+        for (int i=0; i < 10; i++){
+            sml_avr_volt_b = sml_avr_volt_b + analogRead(SMSensorPin2);
+        }
+        sml_avr_volt_b = sml_avr_volt_b/10;
+
+        dtostrf(sml_avr_volt_a, 4, 0, soil_moisture_level_a_str);
+        dtostrf(sml_avr_volt_b, 4, 0, soil_moisture_level_b_str);
+
+        timeing = millis();
+        client.publish("izm/south-balcony/temperature/inside", bme_t_str);
+        client.publish("izm/south-balcony/temperature/outside", DS18B20_t_str);
+        client.publish("izm/south-balcony/pressure", bme_p_str);
+        client.publish("izm/south-balcony/humidity", bme_h_str);
+        client.publish("izm/south-balcony/light-intensity/sensor-01", light_level_a_str);
+        client.publish("izm/south-balcony/light-intensity/sensor-02", light_level_b_str);
+        client.publish("izm/south-balcony/soil-moisture/sensor-01", soil_moisture_level_a_str);
+        client.publish("izm/south-balcony/soil-moisture/sensor-02", soil_moisture_level_b_str);
+    }
+
+    //// SHOW CURRENT VALUES ON DISPLAY ////
 
     // Display Line 1
     lcd.setCursor(0, 0);
