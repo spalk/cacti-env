@@ -1,3 +1,4 @@
+#include "OTA.h"
 #include <PCD8544.h>
 #include <Wire.h>
 #include <BH1750.h>
@@ -5,10 +6,17 @@
 #include <OneWire.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include "credentials.h"
+//#include "credentials.h"
+
+
+unsigned long entry;
 
 unsigned long timeing;
-int timedelta = 60000; // send data to broker every 1 min
+unsigned long timedelta = 60000; // send data to broker every 1 min
+
+unsigned long timeingloop;
+unsigned long timeloopdelta = 1000; // send data to broker every 1 min
+
 
 //// WiFi & MQTT
 WiFiClient espClient;
@@ -109,7 +117,7 @@ void reconnect() {
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
-      delay(5000);
+      delay(1000);
     }
   }
 }
@@ -119,9 +127,12 @@ void reconnect() {
 void setup() {
     Serial.begin(115200);
 
+    Serial.println("Booting");
+    setupOTA("ESP32_Cacti-env");
+
 
     // wifi
-    setup_wifi();
+    //setup_wifi();
     client.setServer(mqtt_server, 1883);
     //client.setCallback(callback);
 
@@ -166,6 +177,7 @@ float getBmeT(){
     Serial.print("BME Temperature = ");
     Serial.print(result);
     Serial.println(" *C");
+    TelnetStream.println("BME280 Temperature = " + String(result));
     return result;
 }
 
@@ -176,6 +188,7 @@ int getBmeP(){
     Serial.print("BME Pressure = ");
     Serial.print(result);
     Serial.println(" mmhg");
+    TelnetStream.println("BME280 Pressure = " + String(result));
     return int(result);
 }
 
@@ -186,6 +199,7 @@ int getBmeH(){
     Serial.print("Humidity = ");
     Serial.print(result);
     Serial.println(" %");
+    TelnetStream.println("BME280 Humidity = " + String(result));
     return int(result);
 }
 
@@ -195,6 +209,7 @@ int getL1(){
     result = bh1750_a.readLightLevel();
     Serial.print("Light Level 1 = ");
     Serial.println(result);
+    TelnetStream.println("BH1750 Light level 1 = " + String(result));
     return int(result);
 }
 
@@ -204,6 +219,7 @@ int getL2(){
     result = bh1750_b.readLightLevel();
     Serial.print("Light Level 2 = ");
     Serial.println(result);
+    TelnetStream.println("BH1750 Light level 2 = " + String(result));
     return int(result);
 }
 
@@ -214,11 +230,13 @@ int getSM1(){
     Serial.print("Soil Moisture Level 1 = ");
     Serial.print(result);
     Serial.println(" V");
+    TelnetStream.println("Soil Moisture level 1 = " + String(result) + "V");
     int result_per;
     result_per = map(result, AirValue1, WaterValue1, 0, 100);
     Serial.print("Soil Moisture Level 1 = ");
     Serial.print(result_per);
     Serial.println(" %");
+    TelnetStream.println("Soil Moisture level 1 = " + String(result_per) + "%");
     return result_per;
 }
 
@@ -229,11 +247,13 @@ int getSM2(){
     Serial.print("Soil Moisture Level 2 = ");
     Serial.print(result);
     Serial.println(" V");
+    TelnetStream.println("Soil Moisture level 2 = " + String(result) + "V");
     int result_per;
     result_per = map(result, AirValue2, WaterValue2, 0, 100);
     Serial.print("Soil Moisture Level 2 = ");
     Serial.print(result_per);
     Serial.println(" %");
+    TelnetStream.println("Soil Moisture level 2 = " + String(result_per) + "%");
     return result_per;
 }
 
@@ -255,7 +275,7 @@ float getDS18B20T(){
     ds.reset();
     ds.select(addr);
     ds.write(0x44, 1); // start conversion, with parasite power on at the end
-    delay(1000);
+    delay(750);
     present = ds.reset();
     ds.select(addr);
     ds.write(0xBE); // Read Scratchpad
@@ -275,125 +295,133 @@ float getDS18B20T(){
     Serial.print("DS18B20 Temperature = ");
     Serial.print(celsius);
     Serial.println(" *C ");
+    TelnetStream.println("DS18B20 Temperature = " + String(celsius));
     return celsius;
 }
 
 void loop() {
-    // connection
-    if (!client.connected()) {
-        reconnect();
-    }
-    client.loop();
+    entry=micros();
 
-    // backlight button
-    if (digitalRead(buttonPin)){
-        if (backlight == true){
-            digitalWrite(BL, HIGH);
-            backlight = false;
-        } else {
-            digitalWrite(BL, LOW);
-            backlight = true;
+    ArduinoOTA.handle();
+
+    if (millis() - timeingloop > timeloopdelta){
+
+        // connection
+        if (!client.connected()) {
+            reconnect();
         }
-    }
+        client.loop();
 
-    // get data from sensors
-    bme_t = getBmeT();
-    bme_p = getBmeP();
-    bme_h = getBmeH();
-    light_level_a = getL1();
-    light_level_b = getL2();
-    soil_moisture_level_a = getSM1();
-    soil_moisture_level_b = getSM2();
-    DS18B20_t = getDS18B20T();
-
-    // send data to broker
-    if (millis() - timeing > timedelta){
-        Serial.println("*** Sending data to broker ***");
-        dtostrf(bme_t, 5, 1, bme_t_str);
-        dtostrf(bme_p, 3, 0, bme_p_str);
-        dtostrf(bme_h, 3, 0, bme_h_str);
-        dtostrf(DS18B20_t, 5, 1, DS18B20_t_str);
-        dtostrf(light_level_a, 5, 1, light_level_a_str);
-        dtostrf(light_level_b, 5, 1, light_level_b_str);
-
-        // get avarage voltage from soil moister sensors
-        int sml_avr_volt_a = 0;
-        for (int i=0; i < 10; i++){
-            sml_avr_volt_a = sml_avr_volt_a + analogRead(SMSensorPin1);
+        // backlight button
+        if (digitalRead(buttonPin)){
+            if (backlight == true){
+                digitalWrite(BL, HIGH);
+                backlight = false;
+            } else {
+                digitalWrite(BL, LOW);
+                backlight = true;
+            }
         }
-        sml_avr_volt_a = sml_avr_volt_a/10;
 
-        int sml_avr_volt_b = 0;
-        for (int i=0; i < 10; i++){
-            sml_avr_volt_b = sml_avr_volt_b + analogRead(SMSensorPin2);
+        // get data from sensors
+        bme_t = getBmeT();
+        bme_p = getBmeP();
+        bme_h = getBmeH();
+        light_level_a = getL1();
+        light_level_b = getL2();
+        soil_moisture_level_a = getSM1();
+        soil_moisture_level_b = getSM2();
+        DS18B20_t = getDS18B20T();
+
+        // send data to broker
+        if (millis() - timeing > timedelta){
+            Serial.println("*** Sending data to broker ***");
+            dtostrf(bme_t, 5, 1, bme_t_str);
+            dtostrf(bme_p, 3, 0, bme_p_str);
+            dtostrf(bme_h, 3, 0, bme_h_str);
+            dtostrf(DS18B20_t, 5, 1, DS18B20_t_str);
+            dtostrf(light_level_a, 5, 1, light_level_a_str);
+            dtostrf(light_level_b, 5, 1, light_level_b_str);
+
+            // get avarage voltage from soil moister sensors
+            int sml_avr_volt_a = 0;
+            for (int i=0; i < 10; i++){
+                sml_avr_volt_a = sml_avr_volt_a + analogRead(SMSensorPin1);
+            }
+            sml_avr_volt_a = sml_avr_volt_a/10;
+
+            int sml_avr_volt_b = 0;
+            for (int i=0; i < 10; i++){
+                sml_avr_volt_b = sml_avr_volt_b + analogRead(SMSensorPin2);
+            }
+            sml_avr_volt_b = sml_avr_volt_b/10;
+
+            dtostrf(sml_avr_volt_a, 4, 0, soil_moisture_level_a_str);
+            dtostrf(sml_avr_volt_b, 4, 0, soil_moisture_level_b_str);
+
+            timeing = millis();
+            client.publish("izm/south-balcony/temperature/inside", bme_t_str);
+            client.publish("izm/south-balcony/temperature/outside", DS18B20_t_str);
+            client.publish("izm/south-balcony/pressure", bme_p_str);
+            client.publish("izm/south-balcony/humidity", bme_h_str);
+            client.publish("izm/south-balcony/light-intensity/sensor-01", light_level_a_str);
+            client.publish("izm/south-balcony/light-intensity/sensor-02", light_level_b_str);
+            client.publish("izm/south-balcony/soil-moisture/sensor-01", soil_moisture_level_a_str);
+            client.publish("izm/south-balcony/soil-moisture/sensor-02", soil_moisture_level_b_str);
         }
-        sml_avr_volt_b = sml_avr_volt_b/10;
 
-        dtostrf(sml_avr_volt_a, 4, 0, soil_moisture_level_a_str);
-        dtostrf(sml_avr_volt_b, 4, 0, soil_moisture_level_b_str);
+        //// SHOW CURRENT VALUES ON DISPLAY ////
 
-        timeing = millis();
-        client.publish("izm/south-balcony/temperature/inside", bme_t_str);
-        client.publish("izm/south-balcony/temperature/outside", DS18B20_t_str);
-        client.publish("izm/south-balcony/pressure", bme_p_str);
-        client.publish("izm/south-balcony/humidity", bme_h_str);
-        client.publish("izm/south-balcony/light-intensity/sensor-01", light_level_a_str);
-        client.publish("izm/south-balcony/light-intensity/sensor-02", light_level_b_str);
-        client.publish("izm/south-balcony/soil-moisture/sensor-01", soil_moisture_level_a_str);
-        client.publish("izm/south-balcony/soil-moisture/sensor-02", soil_moisture_level_b_str);
+        // Display Line 1
+        lcd.setCursor(0, 0);
+        lcd.print("T in =");
+        lcd.print(bme_t, 1);
+        lcd.print(" ");
+        lcd.write(0); // degree sign
+        lcd.print("C");
+
+        // Display Line 2
+        lcd.setCursor(0, 1);
+        lcd.print("T out=");
+        lcd.print(DS18B20_t, 1);
+        lcd.print(" ");
+        lcd.write(0); // degree sign
+        lcd.print("C");
+
+        // Display Line 3
+        lcd.setCursor(0, 2);
+        lcd.print("P=");
+        lcd.print(bme_p);
+        lcd.print("mm");
+
+        lcd.setCursor(50, 2);
+        lcd.print("H=");
+        lcd.print(bme_h);
+        lcd.print("%");
+
+        // Display Line 4
+        lcd.setCursor(0, 3);
+        lcd.print("L1=");
+        lcd.print(light_level_a);
+        lcd.print(" units   ");
+
+        // Display Line 5
+        lcd.setCursor(0, 4);
+        lcd.print("L2=");
+        lcd.print(light_level_b);
+        lcd.print(" units   ");
+
+        // Display Line 6
+        lcd.setCursor(0, 5);
+        lcd.print("M1=");
+        lcd.print(soil_moisture_level_a);
+        lcd.print("% ");
+
+        lcd.setCursor(42, 5);
+        lcd.print("M2=");
+        lcd.print(soil_moisture_level_b);
+        lcd.print("% ");
+
+        timeingloop = millis();
     }
-
-    //// SHOW CURRENT VALUES ON DISPLAY ////
-
-    // Display Line 1
-    lcd.setCursor(0, 0);
-    lcd.print("T in =");
-    lcd.print(bme_t, 1);
-    lcd.print(" ");
-    lcd.write(0); // degree sign
-    lcd.print("C");
-
-    // Display Line 2
-    lcd.setCursor(0, 1);
-    lcd.print("T out=");
-    lcd.print(DS18B20_t, 1);
-    lcd.print(" ");
-    lcd.write(0); // degree sign
-    lcd.print("C");
-
-    // Display Line 3
-    lcd.setCursor(0, 2);
-    lcd.print("P=");
-    lcd.print(bme_p);
-    lcd.print("mm");
-
-    lcd.setCursor(50, 2);
-    lcd.print("H=");
-    lcd.print(bme_h);
-    lcd.print("%");
-
-    // Display Line 4
-    lcd.setCursor(0, 3);
-    lcd.print("L1=");
-    lcd.print(light_level_a);
-    lcd.print(" lux");
-
-    // Display Line 5
-    lcd.setCursor(0, 4);
-    lcd.print("L2=");
-    lcd.print(light_level_b);
-    lcd.print(" lux");
-
-    // Display Line 6
-    lcd.setCursor(0, 5);
-    lcd.print("M1=");
-    lcd.print(soil_moisture_level_a);
-    lcd.print("% ");
-
-    lcd.setCursor(42, 5);
-    lcd.print("M2=");
-    lcd.print(soil_moisture_level_b);
-    lcd.print("%");
-
-    delay(1000);
 }
