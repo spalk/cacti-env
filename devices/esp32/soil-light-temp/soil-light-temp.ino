@@ -267,9 +267,10 @@ float getDS18B20T(){
 
     if ( !ds.search(addr)){
         ds.reset_search();
-        delay(250);
+        delay(500);
         for(byte i = 0; i < 10; i++) addr[i] = 0;
-        //return 0;
+        ds.search(addr);
+        //return;
     }
 
     ds.reset();
@@ -284,13 +285,15 @@ float getDS18B20T(){
         data[i] = ds.read();
     }
 
+
     // Convert the data to actual temperature
     int16_t raw = (data[1] << 8) | data[0];
     byte cfg = (data[4] & 0x60);
+
+
     if (cfg == 0x00) raw = raw & ~7; // 9 bit resolution, 93.75 ms
     else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
     else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
-
     celsius = (float)raw / 16.0;
     Serial.print("DS18B20 Temperature = ");
     Serial.print(celsius);
