@@ -152,8 +152,8 @@ void setup() {
 
     // Initialize the I2C bus and light sensors init
     Wire.begin(21, 22);
-    bh1750_a.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire);
-    bh1750_b.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x5C, &Wire);
+    bh1750_a.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire); //addr to gnd
+    bh1750_b.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x5C, &Wire); //addr to 3v3
 
     // bme280 init
     bool bme280_status;
@@ -339,6 +339,7 @@ void loop() {
         // send data to broker
         if (millis() - timeing > timedelta){
             Serial.println("*** Sending data to broker ***");
+            TelnetStream.println("*** Sending data to broker ***");
             dtostrf(bme_t, 5, 1, bme_t_str);
             dtostrf(bme_p, 3, 0, bme_p_str);
             dtostrf(bme_h, 3, 0, bme_h_str);
@@ -371,6 +372,7 @@ void loop() {
             client.publish("izm/south-balcony/light-intensity/sensor-02", light_level_b_str);
             client.publish("izm/south-balcony/soil-moisture/sensor-01", soil_moisture_level_a_str);
             client.publish("izm/south-balcony/soil-moisture/sensor-02", soil_moisture_level_b_str);
+            TelnetStream.println("*** Sent OK!***");
         }
 
         //// SHOW CURRENT VALUES ON DISPLAY ////
