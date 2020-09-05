@@ -24,8 +24,8 @@ PubSubClient client(espClient);
 
 
 //// Nokia display ////
-/* Pinout:  SCK  18
-            MOSI 23
+/* Pinout:  SCK  18  (clk)
+            MOSI 23  (din)
             DC   19
             RST  14
             CS   5   */
@@ -41,8 +41,8 @@ BH1750 bh1750_a;
 BH1750 bh1750_b;
 int light_level_a = 0;
 int light_level_b = 0;
-char light_level_a_str[6];
-char light_level_b_str[6];
+char light_level_a_str[8];
+char light_level_b_str[8];
 
 
 
@@ -344,8 +344,8 @@ void loop() {
             dtostrf(bme_p, 3, 0, bme_p_str);
             dtostrf(bme_h, 3, 0, bme_h_str);
             dtostrf(DS18B20_t, 5, 1, DS18B20_t_str);
-            dtostrf(light_level_a, 5, 1, light_level_a_str);
-            dtostrf(light_level_b, 5, 1, light_level_b_str);
+            dtostrf(light_level_a, 6, 0, light_level_a_str);
+            dtostrf(light_level_b, 6, 0, light_level_b_str);
 
             // get avarage voltage from soil moister sensors
             int sml_avr_volt_a = 0;
@@ -369,7 +369,13 @@ void loop() {
             client.publish("izm/south-balcony/pressure", bme_p_str);
             client.publish("izm/south-balcony/humidity", bme_h_str);
             client.publish("izm/south-balcony/light-intensity/sensor-01", light_level_a_str);
+            TelnetStream.println("*** light-1");
+            TelnetStream.println(light_level_a);
+            TelnetStream.println(light_level_a_str);
             client.publish("izm/south-balcony/light-intensity/sensor-02", light_level_b_str);
+            TelnetStream.println("*** light-2");
+            TelnetStream.println(light_level_b);
+            TelnetStream.println(light_level_b_str);
             client.publish("izm/south-balcony/soil-moisture/sensor-01", soil_moisture_level_a_str);
             client.publish("izm/south-balcony/soil-moisture/sensor-02", soil_moisture_level_b_str);
             TelnetStream.println("*** Sent OK!***");
