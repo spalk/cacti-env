@@ -40,7 +40,7 @@ void mainView() {
     display.drawString(64, -5, currentT);
     display.drawHorizontalLine(0, 48, 128);
     display.setFont(ArialMT_Plain_10);
-    display.drawString(64, 50, "A.Pressure: " + currentP + "mmHg");
+    display.drawString(64, 50, "A.Pressure: " + currentP + " mmHg");
     display.display();
 }
 
@@ -81,20 +81,36 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("], ");
     Serial.println(message);
 
-    String messageTemp;
+    String MSG;
+    String FirstSym;
+
+    // add "+" if temperature is above zero
+    //if (String(topic) == "izm/south-balcony/temperature/outside") {
+        //FirstSym += (char)message[0];
+        //if (FirstSym != "-"){
+        //    MSG = "+";
+        //}
+    //}
+
 
     for (int i = 0; i < length; i++) {
         Serial.print((char)message[i]);
-        messageTemp += (char)message[i];
+        MSG += (char)message[i];
     }
     Serial.println();
 
     if (String(topic) == "izm/south-balcony/temperature/outside") {
-      currentT = messageTemp;
+        if(MSG.toFloat() > 0){  // to remove spaces
+            currentT = "+";
+            currentT += String(MSG.toFloat(), 1); // 1 - decimal places
+        } else {
+            currentT = MSG;
+        }
+        data_time = millis();
     }
 
     if (String(topic) == "izm/south-balcony/pressure") {
-      currentP = messageTemp;
+      currentP = MSG;
     }
 
 }
@@ -114,10 +130,12 @@ void setup() {
     display.init();
     //display.flipScreenVertically();
 
+    currentT = "???";
+    currentP = "???";
+
     mainView();
 
     timeing = millis();
-    data_time = millis();
     show_time = millis();
 
 
@@ -133,6 +151,13 @@ void loop() {
         reconnect();
     }
     client.loop();
+
+    // check, how fresh data is
+    // if data older than 10 min, then show nothing
+    if (millis() - data_time > 600000){
+        currentT = "???";
+    }
+
 
     // Motion detection
     pirVal = digitalRead(pirPin);
