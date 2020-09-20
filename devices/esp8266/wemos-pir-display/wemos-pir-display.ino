@@ -31,6 +31,8 @@ unsigned long show_time;
 // Data from mqtt
 String currentT;
 String currentP;
+String diffP;
+int yesterdayP;
 
 
 void mainView() {
@@ -40,7 +42,7 @@ void mainView() {
     display.drawString(64, -5, currentT);
     display.drawHorizontalLine(0, 48, 128);
     display.setFont(ArialMT_Plain_10);
-    display.drawString(64, 50, "A.Pressure: " + currentP + " mmHg");
+    display.drawString(64, 50, "Pressure: " + currentP + " [" + diffP + "] mmHg");
     display.display();
 }
 
@@ -60,6 +62,7 @@ void reconnect() {
       // Subscribe
       client.subscribe("izm/south-balcony/temperature/outside");
       client.subscribe("izm/south-balcony/pressure");
+      client.subscribe("izm/south-balcony/pressure-yesterday");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -84,15 +87,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     String MSG;
     String FirstSym;
 
-    // add "+" if temperature is above zero
-    //if (String(topic) == "izm/south-balcony/temperature/outside") {
-        //FirstSym += (char)message[0];
-        //if (FirstSym != "-"){
-        //    MSG = "+";
-        //}
-    //}
-
-
     for (int i = 0; i < length; i++) {
         Serial.print((char)message[i]);
         MSG += (char)message[i];
@@ -111,6 +105,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
     if (String(topic) == "izm/south-balcony/pressure") {
       currentP = MSG;
+    }
+
+    if (String(topic) == "izm/south-balcony/pressure-yesterday") {
+      yesterdayP = MSG.toInt();
+      diffP = String(currentP.toInt()-yesterdayP);
+      if (diffP.toInt() > 0){
+        diffP = "+" + diffP;
+      }
     }
 
 }
