@@ -9,9 +9,9 @@
 - 1 sensor button for display backlight on/off 
 - two output blocks for relay control
 
-###Schemactic: 
+### Schemactic: 
 ![Cacti-Env Main Device schematic](Schematic.svg)
 
-###PCB:
+### PCB:
 ![Cacti-Env Main Device PCB Front Side](PCB_front.svg)
 ![Cacti-Env Main Device PCB Back Side](PCB_back.svg)
