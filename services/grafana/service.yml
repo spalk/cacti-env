@@ -5,6 +5,8 @@
     user: "0"
     ports:
       - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS="natel-discrete-panel"
     env_file:
       - ./services/grafana/grafana.env
     volumes:
