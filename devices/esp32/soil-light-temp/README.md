@@ -12,6 +12,15 @@
 ### Schemactic: 
 ![Cacti-Env Main Device schematic](Schematic.svg)
 
-### PCB:
+### PCB Prototype:
 ![Cacti-Env Main Device PCB Front Side](PCB_front.svg)
 ![Cacti-Env Main Device PCB Back Side](PCB_back.svg)
+
+### Real PCB:
+![Cacti-Env Main Device Real PCB Front Side](real_PCB_front.jpg)
+![Cacti-Env Main Device Real PCB Back Side](real_PCB_back.jpg)
+
+### First assembly
+![Cacti-Env Main Device First Assembly](first_assembly.jpg)  
+![Cacti-Env Main Device First Assembly Working](first_assembly_working.jpg)  
+
