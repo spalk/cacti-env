@@ -6,6 +6,10 @@
 #ifndef MQTT_h
 #define MQTT_h
 
+#ifndef MQTT_MODE_DEBUG
+#define MQTT_MODE_DEBUG 0
+#endif
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include "credentials.h"
@@ -17,11 +21,33 @@ class MQTT
         MQTT();
         void init();
         void check_connection();
+        void send_data(float T_out, float T_in, int P, int H, int L_alfa, int L_beta, int S_alfa, int S_beta);
 
     private:
         WiFiClient espClient;
         PubSubClient client;
+        
         void reconnect();
+        
+        // join two parts of topic
+        char* join_topic(const char* root, const char* tip);
+        
+        // check value and publish
+        void publish(float value, int lengthIncDecimalPoint, int numVarsAfterDecimal, const char* topic_tip);
+        
+        // root-part of topic 
+        const char* topic_root_release =  "izm/south-balcony";
+        const char* topic_root_debug =  "test/test";
+        
+        // constant end-part of topic for each parameter
+        const char* topic_T_out   = "/temperature/outside";
+        const char* topic_T_in    = "/temperature/inside";
+        const char* topic_P        = "/pressure";
+        const char* topic_H        = "/humidity";
+        const char* topic_L_alfa  = "/light-intensity/sensor-01";
+        const char* topic_L_beta  = "/light-intensity/sensor-02";
+        const char* topic_S_alfa  = "/soil-moisture/sensor-01";
+        const char* topic_S_beta  = "/soil-moisture/sensor-02";  
 };
 
 #endif

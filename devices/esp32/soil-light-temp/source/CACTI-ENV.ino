@@ -1,7 +1,17 @@
-#include "Sensors.h"
+#include "OTA.h"
 #include "Display.h"
+#include "Sensors.h"
+#include "MQTT.h"
 
-// is parameter available from device
+#define OTA_DEVICE_ID "ESP32_Cacti-Env_DEV"
+#define MQTT_MODE_DEBUG 1
+
+Display display;
+Sensors sensors;
+MQTT mqtt;
+
+
+// parameter status (is sensor available and returns value)
 bool status_T_out = false;
 bool status_T_in = false;
 bool status_P = false;
@@ -11,17 +21,28 @@ bool status_L_beta = false;
 bool status_S_alfa = false;
 bool status_S_beta = false;
 
+// parameter values (from sensors)
 float T_out, T_in;
 int P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt, S_alfa_perc, S_beta_perc;
 
-String message;
+// timers
+unsigned long time_to_refresh_display = 0;
+const long refresh_display_interval = 1000;
+unsigned long time_to_send_data = 0;
+const long send_data_interval = 60000;
 
-Sensors sensors;
-Display display;
+
+void get_fresh_sensor_values();
+bool its_time_to_refresh_display();
+bool its_time_to_send_data();
+
 
 
 void setup() {
   Serial.begin(115200);
+
+  // OTA
+  setupOTA(OTA_DEVICE_ID);
 
   // sensors
   sensors.init();
@@ -32,103 +53,57 @@ void setup() {
   status_L_beta = sensors.get_L_beta_status();
   status_T_out = sensors.get_T_out_status();
 
+  // display
   display.init();
   display.turn_backlight_on();
   display.show_welcome_screen();
-  delay(10000);
+  delay(3000);
+  display.turn_backlight_off();
+
+  // MQTT
+  mqtt.init();
 }
 
 void loop() {
-  display.show_title();
-  display.show_main_page(12.4, 23.5, 748, 34, 1232, 4231, 23, 35);
-  
+  // Over the air update handler
+  ArduinoOTA.handle();
 
-  if (status_T_in){
-    T_in = sensors.get_T_in();
-    message = "Temperature is " + String(T_in) + " *C";
-  } else {
-    message = "Sensor for T inside is not availabe";
+  if (its_time_to_refresh_display){
+    get_fresh_sensor_values();
+    display.show_title();
+    display.show_main_page(T_out, T_in,P, H, L_alfa, L_beta, S_alfa_perc, S_beta_perc);
   }
 
-  Serial.println(message);
-  delay(1000);
-
-
-  if (status_P){
-    P = sensors.get_P();
-    message = "Pressure is " + String(P) + " mmHg";
-  } else {
-    message = "Sensor for P is not availabe";
+  if (its_time_to_send_data){
+    mqtt.check_connection();
+    mqtt.send_data(T_out, T_in, P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt);
   }
 
-  Serial.println(message);
-  delay(1000);
+}
 
 
-  if (status_H){
-    H = sensors.get_H();
-    message = "Humidity is " + String(H) + " %";
-  } else {
-    message = "Sensor for H is not availabe";
-  }
-
-  Serial.println(message);
-  delay(1000);
-
-
-  if (status_L_alfa){
-    L_alfa = sensors.get_L_alfa();
-    message = "Light alfa is " + String(L_alfa) + " units";
-  } else {
-    message = "Sensor for L alfa is not availabe";
-  }
-
-  Serial.println(message);
-  delay(1000);
+void get_fresh_sensor_values(){
+  T_in  = (status_T_in)  ? sensors.get_T_in()  : -100;
+  T_out = (status_T_out) ? sensors.get_T_out() : -100;
+  P = (status_P) ? sensors.get_P() : -100;
+  H = (status_H) ? sensors.get_H() : -100;
+  L_alfa = (status_L_alfa) ? sensors.get_L_alfa() : -100;
+  L_beta = (status_L_beta) ? sensors.get_L_beta() : -100;
+  S_alfa_volt = (status_S_alfa) ? sensors.get_S_alfa_volt() : -100;
+  S_alfa_perc = (status_S_alfa) ? sensors.get_S_alfa_perc() : -100;
+  S_beta_volt = (status_S_beta) ? sensors.get_S_beta_volt() : -100;
+  S_alfa_perc = (status_S_beta) ? sensors.get_S_beta_perc() : -100;
+}
 
 
-  if (status_L_beta){
-    L_beta = sensors.get_L_beta();
-    message = "Light beta is " + String(L_alfa) + " units";
-  } else {
-    message = "Sensor for L beta is not availabe";
-  }
+bool its_time_to_refresh_display(){
+  bool answer;
+  answer = (millis() - time_to_refresh_display > refresh_display_interval) ? true : false;
+  return answer;
+}
 
-  Serial.println(message);
-  delay(1000);
-
-
-  if (status_T_out){
-    T_out = sensors.get_T_out();
-    message = "Temp out is " + String(T_out) + "*C";
-  } else {
-    message = "Sensor for T out is not availabe";
-  }
-  
-  Serial.println(message);
-  delay(1000);
-
-
-  if (status_S_alfa){
-    S_alfa_volt = sensors.get_S_alfa_volt();
-    S_alfa_perc = sensors.get_S_alfa_perc();
-    message = "Soil Moisture alfa is " + String(S_alfa_volt) + "V " + String(S_alfa_perc) + "%";
-  } else {
-    message = "Sensor for Soil Moisture Alfa is not availabe";
-  }
-
-  Serial.println(message);
-  delay(1000);
-
-
-  if (status_S_beta){
-    S_beta_volt = sensors.get_S_beta_volt();
-    S_beta_perc = sensors.get_S_beta_perc();
-    message = "Soil Moisture beta is " + String(S_beta_volt) + "V " + String(S_beta_perc) + "%";
-  } else {
-    message = "Sensor for Soil Moisture Beta is not availabe";
-  }
-
-  Serial.println(message);
-  delay(1000);
+bool its_time_to_send_data(){
+  bool answer;
+  answer = (millis() - time_to_send_data > send_data_interval) ? true : false;
+  return answer;
 }
