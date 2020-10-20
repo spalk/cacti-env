@@ -1,3 +1,8 @@
+/*
+  Sensors.cpp - Library for interaction with sensors of Cacti-Env main device
+  Created by Dmitry Natkha, October 14, 2020.
+*/
+
 #include "Sensors.h"
 
 
@@ -106,8 +111,7 @@ int Sensors::get_L_beta(){
 }
 
 int Sensors::get_S_alfa_volt(){
-    int result;
-    result = analogRead(SM_PIN_ALFA);
+    int result = Sensors::get_average_analogRead(SM_PIN_ALFA, 10);
     return result;
 }
 
@@ -119,8 +123,7 @@ int Sensors::get_S_alfa_perc(){
 }
 
 int Sensors::get_S_beta_volt(){
-    int result;
-    result = analogRead(SM_PIN_BETA);
+    int result = Sensors::get_average_analogRead(SM_PIN_BETA, 10);
     return result;
 }
 
@@ -168,4 +171,13 @@ float Sensors::get_T_out(){
     else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
     celsius = (float)raw / 16.0;
     return celsius;
+}
+
+int Sensors::get_average_analogRead(int PIN, int iters){
+    int sum = 0;
+    for (int i=0; i < iters; i++){
+        sum = sum + analogRead(PIN);
+    }
+    int average = sum/iters;
+    return average;
 }

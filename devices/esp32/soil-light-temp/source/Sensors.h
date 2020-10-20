@@ -64,6 +64,8 @@ class Sensors
     int AIR_VALUE_BETA = 2400;
     int WATER_VALUE_ALFA = 2100;
     int WATER_VALUE_BETA = 1850;
+
+    int get_average_analogRead(int PIN, int iters);
 };
  
 #endif
