@@ -2,6 +2,7 @@
 #include "Display.h"
 #include "Sensors.h"
 #include "MQTT.h"
+#include "LED.h"
 
 #define OTA_DEVICE_ID "ESP32_Cacti-Env_DEV"
 #define MQTT_MODE_DEBUG 1
@@ -9,6 +10,7 @@
 Display display;
 Sensors sensors;
 MQTT mqtt;
+LED led;
 
 
 // parameter status (is sensor available and returns value)
@@ -41,43 +43,70 @@ bool its_time_to_send_data();
 void setup() {
   Serial.begin(115200);
 
-  // OTA
+  // led init
+  led.init();
+
+  // led welcome
+  led.switch_right_led_on();
+  led.switch_right_led_off();
+  led.switch_left_led_on();
+  led.switch_left_led_off();
+
+  // display init
+  display.init();
+  display.turn_backlight_on();
+
+  display.show_msg_in_title("WiFi init...");
+
+  // OTA (Over The Air update) setup
   setupOTA(OTA_DEVICE_ID);
 
-  // sensors
+  display.show_msg_in_title("Seinsors init...");
+
+  // sensors init and get status
   sensors.init();
-  status_T_in = sensors.get_T_in_status();
+  status_T_in  = sensors.get_T_in_status();
+  status_T_out = sensors.get_T_out_status();
   status_P = sensors.get_P_status();
   status_H = sensors.get_H_status();
   status_L_alfa = sensors.get_L_alfa_status();
   status_L_beta = sensors.get_L_beta_status();
-  status_T_out = sensors.get_T_out_status();
+  status_S_alfa = sensors.get_S_alfa_status();
+  status_S_beta = sensors.get_S_beta_status();
 
-  // display
-  display.init();
-  display.turn_backlight_on();
-  display.show_welcome_screen();
-  delay(3000);
-  display.turn_backlight_off();
+  display.show_msg_in_title("MQTT init...");
 
   // MQTT
   mqtt.init();
+
+  // show welcome screen
+  display.show_welcome_screen();
+  delay(1000);
+  //display.turn_backlight_off();
+
 }
 
 void loop() {
   // Over the air update handler
   ArduinoOTA.handle();
 
-  if (its_time_to_refresh_display){
+  // Refresh display
+  if (its_time_to_refresh_display()){
+    led.switch_left_led_on();
     get_fresh_sensor_values();
     display.show_title();
     display.show_main_page(T_out, T_in,P, H, L_alfa, L_beta, S_alfa_perc, S_beta_perc);
+    led.switch_left_led_off();
   }
 
+/*
   if (its_time_to_send_data){
+    led.switch_right_led_on();
     mqtt.check_connection();
     mqtt.send_data(T_out, T_in, P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt);
+    led.switch_right_led_off();
   }
+*/
 
 }
 
@@ -92,13 +121,20 @@ void get_fresh_sensor_values(){
   S_alfa_volt = (status_S_alfa) ? sensors.get_S_alfa_volt() : -100;
   S_alfa_perc = (status_S_alfa) ? sensors.get_S_alfa_perc() : -100;
   S_beta_volt = (status_S_beta) ? sensors.get_S_beta_volt() : -100;
-  S_alfa_perc = (status_S_beta) ? sensors.get_S_beta_perc() : -100;
+  S_beta_perc = (status_S_beta) ? sensors.get_S_beta_perc() : -100;
 }
 
 
 bool its_time_to_refresh_display(){
   bool answer;
-  answer = (millis() - time_to_refresh_display > refresh_display_interval) ? true : false;
+  unsigned long time_diff;
+  time_diff = millis() - time_to_refresh_display;
+  if (time_diff > refresh_display_interval){
+    answer = true;
+    time_to_refresh_display = millis();
+  } else {
+    answer = false;
+  }
   return answer;
 }
 

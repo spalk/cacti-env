@@ -83,12 +83,6 @@ void Display::show_welcome_screen(){
 }
 
 void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int l2, int s1, int s2){
-    // 1     * Cacti-Env  *
-    // 2     T1  +15.1   *C
-    // 3     T2  +20.3   *C
-    // 4     P 749mm  H 23%
-    // 5     L 9392  L 2382
-    // 6     M 100%  M 100%
 
     // Display Line 2
     lcd.setCursor(0, 1);
@@ -96,8 +90,9 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     lcd.write(0); // temperature symbol   
     lcd.write(2); // cloud symbol   
     lcd.print(" ");
-    if (t_out > 0){lcd.print("+");}
-    lcd.print(t_out, 1);
+    if (t_out > 0)     { lcd.print("+");      }
+    if (t_out != -100) { lcd.print(t_out, 1); }else{ lcd.print(nodata); }
+    
     lcd.setCursor(54, 1);
     lcd.write(3); // degree symbol   
     lcd.print("C");
@@ -109,7 +104,7 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     lcd.write(1); // house symbol   
     lcd.print(" ");
     if (t_in > 0){lcd.print("+");}
-    lcd.print(t_in, 1);
+    if (t_in != -100) { lcd.print(t_in, 1); }else{ lcd.print(nodata); }
     lcd.setCursor(54, 2);
     lcd.write(3); // degree symbol   
     lcd.print("C");
@@ -119,11 +114,11 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     lcd.clearLine();
     lcd.write(4); // pressure symbol 
     lcd.print(" ");
-    lcd.print(p);
+    if (p != -100) { lcd.print(p); }else{ lcd.print(nodata); }
     lcd.print("mm ");
     lcd.write(5); // humidity symbol
     lcd.print(" ");
-    lcd.print(h);
+    if (h != -100) { lcd.print(h); }else{ lcd.print(nodata); }
     lcd.print("%");
 
     // Display Line 5
@@ -131,11 +126,13 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     lcd.clearLine();
     lcd.write(6); // light 1 symbol 
     lcd.write(8); // symbol I
-    lcd.print(l1);
+    if (l1 != -100) { lcd.print(l1); }else{ lcd.print(nodata); }
     lcd.setCursor(48, 4);
     lcd.write(7); // soli moisture symbol 
     lcd.write(8); // symbol I
-    if (s1 < 0){
+    if (s1 == -100) {
+        lcd.print(nodata);
+    }else if (s1 < 0){
         lcd.print(0);    
     } else if (s1 > 99){
         lcd.print(100);    
@@ -144,22 +141,20 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     }
     lcd.print("%");
 
-
-    
-    
-
     // Display Line 6
     lcd.setCursor(0, 5);
     lcd.clearLine();
 
     lcd.write(6);
     lcd.write(9); // symbol II
-    lcd.print(l2);
+    if (l2 != -100) { lcd.print(l2); }else{ lcd.print(nodata); }
     
     lcd.setCursor(48, 5);
     lcd.write(7);
     lcd.write(9); // symbol II
-    if (s2 < 0){
+    if (s2 == -100) {
+        lcd.print(nodata);
+    }else if (s2 < 0){
         lcd.print(0);    
     } else if (s2 > 99){
         lcd.print(100);    

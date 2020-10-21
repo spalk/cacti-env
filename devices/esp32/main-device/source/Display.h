@@ -37,6 +37,9 @@ class Display
     // Backlight pin
     int BL = 4;
     bool backlight = false;
+    String nodata = "---";
+
+    //
 
     // custom symbols 
     // Created with online webtool: http://carlosefr.github.io/pcd8544/

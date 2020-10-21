@@ -45,10 +45,15 @@ bool Sensors::get_L_beta_status(){
 bool Sensors::get_T_out_status(){
     int iters = 5;
     float summ = 0;
+    float avg;
     for (int i = 0; i < iters; i++){
-        summ = summ + Sensors::get_T_out();
+        float v = Sensors::get_T_out();
+        summ = summ + v;
     }
-    if (summ == 0){
+    avg = summ/iters;
+    String avg_str = String(avg);
+    
+    if (avg_str == "-0.06"){
         return false;
     } else {
         return true;
@@ -124,6 +129,7 @@ int Sensors::get_S_alfa_perc(){
 
 int Sensors::get_S_beta_volt(){
     int result = Sensors::get_average_analogRead(SM_PIN_BETA, 10);
+    Serial.print(result);
     return result;
 }
 
@@ -131,6 +137,7 @@ int Sensors::get_S_beta_perc(){
     int value_volt = Sensors::get_S_beta_volt();
     int result;
     result = map(result, AIR_VALUE_BETA, WATER_VALUE_BETA, 0, 100);
+    Serial.print(result);
     return result;
 }
 
