@@ -37,6 +37,7 @@ const long send_data_interval = 60000;
 void get_fresh_sensor_values();
 bool its_time_to_refresh_display();
 bool its_time_to_send_data();
+String IpAddress2String(const IPAddress& ipAddress);
 
 
 
@@ -60,6 +61,11 @@ void setup() {
 
   // OTA (Over The Air update) setup
   setupOTA(OTA_DEVICE_ID);
+
+  display.show_msg_in_title(IpAddress2String(WiFi.localIP()));
+  delay(2000);
+
+
 
   display.show_msg_in_title("Seinsors init...");
 
@@ -138,8 +144,17 @@ bool its_time_to_refresh_display(){
   return answer;
 }
 
+
 bool its_time_to_send_data(){
   bool answer;
   answer = (millis() - time_to_send_data > send_data_interval) ? true : false;
   return answer;
+}
+
+
+String IpAddress2String(const IPAddress& ipAddress){
+  return String(ipAddress[0]) + String(".") +\
+  String(ipAddress[1]) + String(".") +\
+  String(ipAddress[2]) + String(".") +\
+  String(ipAddress[3])  ;
 }
