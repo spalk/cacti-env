@@ -129,7 +129,6 @@ int Sensors::get_S_alfa_perc(){
 
 int Sensors::get_S_beta_volt(){
     int result = Sensors::get_average_analogRead(SM_PIN_BETA, 10);
-    Serial.print(result);
     return result;
 }
 
@@ -137,7 +136,6 @@ int Sensors::get_S_beta_perc(){
     int value_volt = Sensors::get_S_beta_volt();
     int result;
     result = map(result, AIR_VALUE_BETA, WATER_VALUE_BETA, 0, 100);
-    Serial.print(result);
     return result;
 }
 

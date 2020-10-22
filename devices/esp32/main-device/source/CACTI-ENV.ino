@@ -5,7 +5,7 @@
 #include "LED.h"
 
 #define OTA_DEVICE_ID "ESP32_Cacti-Env_DEV"
-#define MQTT_MODE_DEBUG 1
+
 
 Display display;
 Sensors sensors;
@@ -31,7 +31,7 @@ int P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt, S_alfa_perc, S_beta_perc;
 unsigned long time_to_refresh_display = 0;
 const long refresh_display_interval = 1000;
 unsigned long time_to_send_data = 0;
-const long send_data_interval = 60000;
+const long send_data_interval = 10000;
 
 
 void get_fresh_sensor_values();
@@ -105,14 +105,14 @@ void loop() {
     led.switch_left_led_off();
   }
 
-/*
-  if (its_time_to_send_data){
+
+  if (its_time_to_send_data()){
     led.switch_right_led_on();
     mqtt.check_connection();
     mqtt.send_data(T_out, T_in, P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt);
     led.switch_right_led_off();
   }
-*/
+
 
 }
 
@@ -147,7 +147,15 @@ bool its_time_to_refresh_display(){
 
 bool its_time_to_send_data(){
   bool answer;
-  answer = (millis() - time_to_send_data > send_data_interval) ? true : false;
+  unsigned long time_diff;
+  time_diff = millis() - time_to_send_data;
+  if (time_diff > send_data_interval){
+    answer = true;
+    time_to_send_data = millis();
+    Serial.println("Time to send data");
+  } else {
+    answer = false;
+  }
   return answer;
 }
 

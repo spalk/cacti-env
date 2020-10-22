@@ -6,9 +6,9 @@
 #ifndef MQTT_h
 #define MQTT_h
 
-#ifndef MQTT_MODE_DEBUG
-#define MQTT_MODE_DEBUG 0
-#endif
+
+#define MQTT_MODE_DEBUG 1
+
 
 #include <WiFi.h>
 #include <PubSubClient.h>
@@ -28,9 +28,6 @@ class MQTT
         PubSubClient client;
         
         void reconnect();
-        
-        // join two parts of topic
-        char* join_topic(const char* root, const char* tip);
         
         // check value and publish
         void publish(float value, int lengthIncDecimalPoint, int numVarsAfterDecimal, const char* topic_tip);
