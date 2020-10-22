@@ -29,7 +29,10 @@ class Display
     void show_welcome_screen();
     void show_title();
     void show_msg_in_title(String title);
+    void show_msg_in_line(String msg, int line);
     void show_main_page(float t_out, float t_in, int p, int h, int l1, int l2, int s1, int s2);
+    void show_loading_line(String task, String status, int line);
+    void clear();
 
   private:
     PCD8544 lcd;
@@ -43,6 +46,7 @@ class Display
 
     // custom symbols 
     // Created with online webtool: http://carlosefr.github.io/pcd8544/
+    byte glyph_loding_bar[5] = {0x55, 0xaa, 0x55, 0xaa, 0x55};
     byte glyph_temperature[5] = {0x00, 0x30, 0x6e, 0x7e, 0x30};
     byte glyph_house[5] = {0x10, 0x78, 0x5c, 0x78, 0x10};
     byte glyph_cloud[5] = {0x20, 0x34, 0x36, 0x26, 0x04};

@@ -13,10 +13,12 @@ class LED
     public:
         LED();
         void init();
-        void switch_left_led_on();
-        void switch_left_led_off();
-        void switch_right_led_on();
-        void switch_right_led_off();
+        void switch_left_on();
+        void switch_left_off();
+        void switch_right_on();
+        void switch_right_off();
+        void blink_left(int times, int delay_time);
+        void blink_right(int times, int delay_time);
 
 
     private:

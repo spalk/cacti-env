@@ -33,6 +33,8 @@ void Display::init(){
     lcd.createChar(17, glyph_v);
     lcd.createChar(18, glyph__);
     lcd.createChar(19, glyph_cacti);
+
+    lcd.createChar(20, glyph_loding_bar);
 }
 
 void Display::turn_backlight_on(){
@@ -56,6 +58,9 @@ void Display::show_msg_in_title(String title){
 }
 
 void Display::show_title(){
+    lcd.setCursor(3, 0);
+    lcd.print("_____________");
+
     lcd.setCursor(0, 0);
     lcd.clearLine();
     
@@ -75,7 +80,6 @@ void Display::show_title(){
     lcd.write(19); // cacti
     lcd.write(18); // space
 }
-
 
 void Display::show_welcome_screen(){
     lcd.clear();
@@ -164,3 +168,28 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     lcd.print("%");
 
 }
+
+void Display::show_loading_line(String task, String status, int line){
+    // show task name
+    lcd.setCursor(0, line);
+    lcd.clearLine();
+    lcd.print(task);
+    int num_points = 14 - task.length() - status.length();
+    for (int i = 0; i < num_points; i++){
+        lcd.print(".");
+        delay(random(200, 500));
+    }
+    lcd.print(status);
+    delay(700);
+}
+
+void Display::show_msg_in_line(String msg, int line){
+    lcd.setCursor(0, line);
+    lcd.clearLine();
+    lcd.print(msg);
+}
+
+void Display::clear(){
+    lcd.clear();
+}
+

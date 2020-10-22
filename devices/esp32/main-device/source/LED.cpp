@@ -17,21 +17,42 @@ void LED::init(){
 
 // LEFT LED
 
-void LED::switch_left_led_on(){
+void LED::switch_left_on(){
     digitalWrite (LEFT_LED_PIN, HIGH);
 }
 
-void LED::switch_left_led_off(){
+void LED::switch_left_off(){
     digitalWrite (LEFT_LED_PIN, LOW);
 }
 
 
 // RIGHT LED
 
-void LED::switch_right_led_on(){
+void LED::switch_right_on(){
     digitalWrite (RIGHT_LED_PIN, HIGH);
 }
 
-void LED::switch_right_led_off(){
+void LED::switch_right_off(){
     digitalWrite (RIGHT_LED_PIN, LOW);
 }
+
+
+void LED::blink_left(int times, int delay_time){
+    for (int i = 0; i < times; i++){
+        LED::switch_left_on();
+        delay(delay_time);
+        LED::switch_left_off();
+        delay(delay_time);
+    }
+}
+
+void LED::blink_right(int times, int delay_time){
+    for (int i = 0; i < times; i++){
+        LED::switch_right_on();
+        delay(delay_time);
+        LED::switch_right_off();
+        delay(delay_time);
+    }
+
+}
+

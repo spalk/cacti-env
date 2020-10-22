@@ -44,30 +44,35 @@ String IpAddress2String(const IPAddress& ipAddress);
 void setup() {
   Serial.begin(115200);
 
-  // led init
-  led.init();
-
-  // led welcome
-  led.switch_right_led_on();
-  led.switch_right_led_off();
-  led.switch_left_led_on();
-  led.switch_left_led_off();
-
   // display init
   display.init();
   display.turn_backlight_on();
 
-  display.show_msg_in_title("WiFi init...");
+  display.show_msg_in_line("LOADING:", 0);
+  delay(500);
+
+  // led init
+  led.init();
+  display.show_loading_line("LEDs", "OK", 1);
+  led.blink_left(3, 100);
+  led.blink_right(3, 100);
+  delay(500);
+
+  display.show_msg_in_line("WiFi", 2);
 
   // OTA (Over The Air update) setup
   setupOTA(OTA_DEVICE_ID);
 
-  display.show_msg_in_title(IpAddress2String(WiFi.localIP()));
-  delay(2000);
+  display.show_loading_line("WiFi", "OK", 2);
+  display.show_msg_in_line(IpAddress2String(WiFi.localIP()), 3);
 
+  // MQTT
+  mqtt.init();
 
+  display.show_loading_line("MQTT", "OK", 4);
 
-  display.show_msg_in_title("Seinsors init...");
+  display.clear();
+  display.show_msg_in_line("Check sensors:", 0);
 
   // sensors init and get status
   sensors.init();
@@ -80,14 +85,22 @@ void setup() {
   status_S_alfa = sensors.get_S_alfa_status();
   status_S_beta = sensors.get_S_beta_status();
 
-  display.show_msg_in_title("MQTT init...");
+  display.show_loading_line("Temp out", (status_T_out) ? "OK" : "NOK", 1);
+  display.show_loading_line("Temp in", (status_T_in) ? "OK" : "NOK", 2);
+  display.show_loading_line("Pressure", (status_P) ? "OK" : "NOK", 3);
+  display.show_loading_line("Humidity", (status_H) ? "OK" : "NOK", 4);
+  display.show_loading_line("Light 1", (status_L_alfa) ? "OK" : "NOK", 5);
+  display.clear();
+  display.show_msg_in_line("Check sensors:", 0);
+  display.show_loading_line("Light 2", (status_L_beta) ? "OK" : "NOK", 1);
+  display.show_loading_line("Soil 1", (status_S_alfa) ? "OK" : "NOK", 2);
+  display.show_loading_line("Soil 2", (status_S_beta) ? "OK" : "NOK", 3);
 
-  // MQTT
-  mqtt.init();
+  delay(500);
 
   // show welcome screen
   display.show_welcome_screen();
-  delay(1000);
+  delay(3000);
   //display.turn_backlight_off();
 
 }
@@ -98,19 +111,19 @@ void loop() {
 
   // Refresh display
   if (its_time_to_refresh_display()){
-    led.switch_left_led_on();
+    led.switch_left_on();
     get_fresh_sensor_values();
     display.show_title();
     display.show_main_page(T_out, T_in,P, H, L_alfa, L_beta, S_alfa_perc, S_beta_perc);
-    led.switch_left_led_off();
+    led.switch_left_off();
   }
 
 
   if (its_time_to_send_data()){
-    led.switch_right_led_on();
+    led.switch_right_on();
     mqtt.check_connection();
     mqtt.send_data(T_out, T_in, P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt);
-    led.switch_right_led_off();
+    led.switch_right_off();
   }
 
 
