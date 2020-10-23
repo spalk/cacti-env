@@ -116,8 +116,9 @@ void setup() {
 }
 
 void loop() {
-  // Over the air update handler
   ArduinoOTA.handle();
+
+  mqtt.check_connection();
 
   // Refresh display
   if (its_time_to_refresh_display()){
@@ -131,7 +132,6 @@ void loop() {
   // Send data via MQTT
   if (its_time_to_send_data()){
     led.switch_right_on();
-    mqtt.check_connection();
     mqtt.send_data(T_out, T_in, P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt);
     led.switch_right_off();
   }

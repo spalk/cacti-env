@@ -6,14 +6,17 @@
 #ifndef MQTT_h
 #define MQTT_h
 
-
 #define MQTT_MODE_DEBUG 1
 
 
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include "credentials.h"
+#include "LED.h"
 
+extern LED led;
+
+static void callback(char* topic, byte* payload, unsigned int length);
 
 class MQTT
 {
@@ -28,6 +31,7 @@ class MQTT
         PubSubClient client;
         
         void reconnect();
+        //static void callback(char* topic, byte* payload, unsigned int length);
         
         // check value and publish
         void publish(float value, int lengthIncDecimalPoint, int numVarsAfterDecimal, const char* topic_tip);

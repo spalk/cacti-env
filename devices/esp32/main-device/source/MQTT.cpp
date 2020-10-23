@@ -11,7 +11,7 @@ MQTT::MQTT(){}
 void MQTT::init(){
     client.setClient(espClient);
     client.setServer(mqtt_server, 1883);
-    //client.setCallback(callback);
+    client.setCallback(callback);
 }
 
 void MQTT::check_connection(){
@@ -19,7 +19,6 @@ void MQTT::check_connection(){
         Serial.println("MQTT Reconnection");
         MQTT::reconnect();
     }
-    Serial.println("MQTT Connected");
     client.loop();
 }
 
@@ -31,7 +30,7 @@ void MQTT::reconnect(){
         if (client.connect(mqtt_client_name, mqtt_login, mqtt_pass)) {
             Serial.println("connected");
             // Subscribe
-            //client.subscribe("esp32/output");
+            client.subscribe("izm/south-balcony/main-device");
         } else {
             Serial.print("failed, rc=");
             Serial.print(client.state());
@@ -88,3 +87,44 @@ void MQTT::publish(
     };
 }
 
+
+static void callback(char* topic, byte* payload, unsigned int length) {
+    // Conver the incoming byte array to a string
+    payload[length] = '\0'; // Null terminator used to terminate the char array
+    String message = (char*)payload;
+
+    Serial.print("Message arrived on topic: [");
+    Serial.print(topic);
+    Serial.print("], ");
+    Serial.println(message);
+
+    if (message == "reboot"){
+        ESP.restart();
+    } 
+
+    // relay 1
+    else if (message == "relay_1_on"){
+        Serial.print("Relay 1 switching on...");
+    } else if (message == "relay_1_off"){
+        Serial.print("Relay 1 switching off...");
+    } 
+
+    // relay 2
+    else if (message == "relay_2_on"){
+        Serial.print("Relay 2 switching on...");
+    } else if (message == "relay_2_off"){
+        Serial.print("Relay 2 switching off...");
+    } 
+    
+    // alert 
+    else if (message == "alert"){
+        Serial.print("Achtung!");
+        led.switch_right_on();
+    }else if (message == "no_alert"){
+        Serial.print("It's ok");
+        led.switch_right_off();
+    } 
+
+
+
+}
