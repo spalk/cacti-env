@@ -4,6 +4,7 @@
 */
 
 #include "MQTT.h"
+#include "Relay.h"
 
 
 MQTT::MQTT(){}
@@ -12,6 +13,7 @@ void MQTT::init(){
     client.setClient(espClient);
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
+    rel.init();
 }
 
 void MQTT::check_connection(){
@@ -105,17 +107,22 @@ static void callback(char* topic, byte* payload, unsigned int length) {
     // relay 1
     else if (message == "relay_1_on"){
         Serial.print("Relay 1 switching on...");
+        rel.switch_alfa_on();
     } else if (message == "relay_1_off"){
         Serial.print("Relay 1 switching off...");
+        rel.switch_alfa_off();
     } 
 
     // relay 2
     else if (message == "relay_2_on"){
         Serial.print("Relay 2 switching on...");
+        rel.switch_beta_on();
     } else if (message == "relay_2_off"){
         Serial.print("Relay 2 switching off...");
+        rel.switch_beta_off();
     } 
     
+    /*
     // alert 
     else if (message == "alert"){
         Serial.print("Achtung!");
@@ -124,6 +131,7 @@ static void callback(char* topic, byte* payload, unsigned int length) {
         Serial.print("It's ok");
         led.switch_right_off();
     } 
+    */
 
 
 

@@ -3,6 +3,7 @@
 #include "Sensors.h"
 #include "MQTT.h"
 #include "LED.h"
+#include "Relay.h"
 
 #define OTA_DEVICE_ID "ESP32_Cacti-Env_DEV"
 
@@ -11,6 +12,7 @@ Display display;
 Sensors sensors;
 MQTT mqtt;
 LED led;
+Relay rel;
 
 
 // parameter status (is sensor available and returns value)

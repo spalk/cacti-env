@@ -12,9 +12,12 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include "credentials.h"
-#include "LED.h"
+#include "Relay.h"
+// #include "LED.h"
 
-extern LED led;
+//extern LED led;
+extern Relay rel;
+
 
 static void callback(char* topic, byte* payload, unsigned int length);
 
