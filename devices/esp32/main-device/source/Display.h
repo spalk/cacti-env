@@ -25,6 +25,7 @@ class Display
     void init();
     void turn_backlight_on();
     void turn_backlight_off();
+    void switch_backlight();
     bool get_backlight_status();
     void show_welcome_screen();
     void show_title();
@@ -68,7 +69,7 @@ class Display
     byte glyph__[5] = {0x40, 0x40, 0x40, 0x40, 0x40};
     byte glyph_cacti[5] = {0x46, 0x48, 0x7f, 0x50, 0x4e};
 
-    // Created with online webtool from www.riyas.org
+    // Created with online webtool from https://www.riyas.org/2017/01/online-tool-to-convert-bitmap-to-hex-nokia-arduino.html
     const unsigned char Welcome_Bitmap[504] = {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 

@@ -32,11 +32,17 @@ unsigned long time_to_refresh_display = 0;
 const long refresh_display_interval = 1000;
 unsigned long time_to_send_data = 0;
 const long send_data_interval = 10000;
+unsigned long time_to_switch_bckl = 0;
+const long switch_bckl_interval = 500;
+
+// button
+const int BUTTON_PIN = 35;
 
 
 void get_fresh_sensor_values();
 bool its_time_to_refresh_display();
 bool its_time_to_send_data();
+bool its_time_to_switch_bckl();
 String IpAddress2String(const IPAddress& ipAddress);
 
 
@@ -53,7 +59,7 @@ void setup() {
 
   // led init
   led.init();
-  display.show_loading_line("LEDs", "OK", 1);
+  display.show_loading_line("LEDs init", "OK", 1);
   led.blink_left(3, 100);
   led.blink_right(3, 100);
   delay(500);
@@ -70,6 +76,7 @@ void setup() {
   mqtt.init();
 
   display.show_loading_line("MQTT", "OK", 4);
+
 
   display.clear();
   display.show_msg_in_line("Check sensors:", 0);
@@ -89,20 +96,23 @@ void setup() {
   display.show_loading_line("Temp in", (status_T_in) ? "OK" : "NOK", 2);
   display.show_loading_line("Pressure", (status_P) ? "OK" : "NOK", 3);
   display.show_loading_line("Humidity", (status_H) ? "OK" : "NOK", 4);
-  display.show_loading_line("Light 1", (status_L_alfa) ? "OK" : "NOK", 5);
   display.clear();
+
+
   display.show_msg_in_line("Check sensors:", 0);
-  display.show_loading_line("Light 2", (status_L_beta) ? "OK" : "NOK", 1);
-  display.show_loading_line("Soil 1", (status_S_alfa) ? "OK" : "NOK", 2);
-  display.show_loading_line("Soil 2", (status_S_beta) ? "OK" : "NOK", 3);
+  display.show_loading_line("Light 1", (status_L_alfa) ? "OK" : "NOK", 1);
+  display.show_loading_line("Light 2", (status_L_beta) ? "OK" : "NOK", 2);
+  display.show_loading_line("Soil 1", (status_S_alfa) ? "OK" : "NOK", 3);
+  display.show_loading_line("Soil 2", (status_S_beta) ? "OK" : "NOK", 4);
 
   delay(500);
 
   // show welcome screen
   display.show_welcome_screen();
   delay(3000);
-  //display.turn_backlight_off();
 
+  // button
+  pinMode(BUTTON_PIN, INPUT);
 }
 
 void loop() {
@@ -118,7 +128,7 @@ void loop() {
     led.switch_left_off();
   }
 
-
+  // Send data via MQTT
   if (its_time_to_send_data()){
     led.switch_right_on();
     mqtt.check_connection();
@@ -126,6 +136,12 @@ void loop() {
     led.switch_right_off();
   }
 
+  // Button
+  if (digitalRead(BUTTON_PIN)){
+    if (its_time_to_switch_bckl()){
+      display.switch_backlight();
+    }
+  }
 
 }
 
@@ -165,7 +181,19 @@ bool its_time_to_send_data(){
   if (time_diff > send_data_interval){
     answer = true;
     time_to_send_data = millis();
-    Serial.println("Time to send data");
+  } else {
+    answer = false;
+  }
+  return answer;
+}
+
+bool its_time_to_switch_bckl(){
+  bool answer;
+  unsigned long time_diff;
+  time_diff = millis() - time_to_switch_bckl;
+  if (time_diff > switch_bckl_interval){
+    answer = true;
+    time_to_switch_bckl = millis();
   } else {
     answer = false;
   }

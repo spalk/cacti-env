@@ -47,6 +47,14 @@ void Display::turn_backlight_off(){
     backlight = false;
 }
 
+void Display::switch_backlight(){
+    if (backlight){
+        Display::turn_backlight_off();
+    }else{
+        Display::turn_backlight_on();
+    }
+}
+
 bool Display::get_backlight_status(){
     return backlight;
 }
@@ -58,9 +66,6 @@ void Display::show_msg_in_title(String title){
 }
 
 void Display::show_title(){
-    lcd.setCursor(3, 0);
-    lcd.print("_____________");
-
     lcd.setCursor(0, 0);
     lcd.clearLine();
     
