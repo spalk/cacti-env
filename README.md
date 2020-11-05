@@ -1,57 +1,32 @@
-# cacti-env
-Succulents and cacti indoor environment monitoring
+![Cacti-Env Logo](devices/main-device/static/cacti-env-welcome-bitmap.bmp)
+
+Cacti-Env 
+=========
+_Succulents and cacti indoor environment monitoring_
+
+The main idea of project is to monitor environment around plants indoors and improve condtions where they live.
+
+### First step: data collecting
+
+The monitored parameters are:
+- temperature
+- light level
+- relative humidity
+- soil moisture
+
+There are also other additional parameters taken into account:
+- atmospheric pressure
+- outside temperature
+- position of sun 
+- position of moon
+   
+All of this parameters a recorded every minute. 
 
 
+### Second step: data analysing
 
+For each parameters are defined theoretical ranges, when plants feel happy. This ranges can be ajusted according to visual conditions of plants or new theoretical information.
 
-#
+### Third step: action
 
-Start docker-compose:
-```commandline
-sudo docker-compose up -d
-```
-
-Stop docker-compose: 
-```
-sudo docker-compose down
-```
-
-Get list of only running Docker containers: 
-```commandline
-sudo docker ps
-```
-
-Run any command in a running container just knowing its ID (or name):
-```commandline
-docker exec -it <container_id_or_name> echo "I'm inside the container!"
-```
-
-Create new account for mosquitto client:
-```commandline
-sudo mosquitto_passwd -c /etc/mosquitto/passwd <username>
-```
-
-Connect to the influx: 
-```
-sudo docker exec -it <container_id_or_name> influx
-```
-Example
-```
-sudo docker exec -it influxdb influx
-```
-
-show databases
-
-use <db_name>
-
-show measurements
-
-drop measurement "name"
-
-select * from temperature where  value = -0.1 limit 10
-select * from temperature where  value = -0.1 order by time desc limit 10 
-
-delete from temperature  where time = 1598902818348571313
-
-
-
+In cases when some parameter is out of range actions taken to return it to normal value.   
