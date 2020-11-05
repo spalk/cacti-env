@@ -35,3 +35,23 @@ Connect to the influx:
 ```
 sudo docker exec -it <container_id_or_name> influx
 ```
+Example
+```
+sudo docker exec -it influxdb influx
+```
+
+show databases
+
+use <db_name>
+
+show measurements
+
+drop measurement "name"
+
+select * from temperature where  value = -0.1 limit 10
+select * from temperature where  value = -0.1 order by time desc limit 10 
+
+delete from temperature  where time = 1598902818348571313
+
+
+
