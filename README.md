@@ -4,9 +4,9 @@ Cacti-Env
 =========
 _Succulents and cacti indoor environment monitoring_
 
-The main idea of project is to monitor environment around plants indoors and improve conditions where they live.
+The main idea of the Cacti-Env project is to monitor environment around plants indoors and improve conditions where they live.
 
-This project was successfully implemented in big city apartment in the North, where winters are cold and nights are long. Although it could be convenient for any type of plants in any location in the world.   
+It was successfully implemented on collection of succulents in big city apartment in the North, where winters are cold and nights are long. Although it could be convenient for any type of plants in any location in the world.   
 
 The goal is achieved in three steps: 
  
@@ -51,6 +51,10 @@ For light deficiency compensation are used artificial grow lights. For temperatu
     - analyzes values and can send signal to on/off relays to normalize environment conditions if it's needed.
     - calculat additional data such as Sun altitude and azimuth for more accurate light condition assessment   
 3. Grafana beautifully shows all collected data and how efficient automation works.  If some parameter is out of normal range, it can send notification via Telegram Messenger.
-4. Additional device **Publisher** is optional. One or more can be used if information from main device is not enough.  
-5. Additional device **Informer** is just for more convenience. It shows actual value on bright informative display. 
-   
+4. Additional device **Publisher** is optional. One or more can be used if information from main device is not enough. It is just a box with esp8266 controller and sensor, one or more.  
+5. Additional device **Informer** is just for more convenience. It shows actual value on bright informative display. It also based on esp8266 microcontroller and has infrared motion sensor (PIR) to extend life time of LED-display.
+  
+  
+## Some data examples in Grafana representation:
+
+...
