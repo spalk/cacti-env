@@ -4,7 +4,12 @@ Cacti-Env
 =========
 _Succulents and cacti indoor environment monitoring_
 
-The main idea of project is to monitor environment around plants indoors and improve conditions where they live in three steps:
+The main idea of project is to monitor environment around plants indoors and improve conditions where they live.
+
+This project was successfully implemented in big city apartment in the North, where winters are cold and nights are long. Although it could be convenient for any type of plants in any location in the world.   
+
+The goal is achieved in three steps: 
+ 
 
 ### First step: data collecting
 
@@ -25,7 +30,7 @@ All of this parameters a recorded every minute.
 
 ### Second step: data analysing
 
-For each parameters are defined theoretical ranges, when plants feel happy. This ranges can be adjusted according to visual conditions of plants or fresh theoretical information.
+For each parameters are defined theoretical ranges, when plants feel happy. This ranges can be adjusted according to visual condition of plants or fresh theoretical information.
 
 Ranges of parameters are also depend on season of the year and dormancy period of the plants. For instance winter temperature for succulents should be 10-15 degrees Celsius when they usually dormant, in summer more than 25 when they usually active grow. 
 
