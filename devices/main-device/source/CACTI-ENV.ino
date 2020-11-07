@@ -1,4 +1,5 @@
 #include "OTA.h"
+#include <TelnetStream.h>
 #include "Display.h"
 #include "Sensors.h"
 #include "MQTT.h"
@@ -70,6 +71,8 @@ void setup() {
   display.show_loading_line("WiFi", "OK", 2);
   display.show_msg_in_line(IpAddress2String(WiFi.localIP()), 3);
 
+  TelnetStream.begin();
+
   // MQTT
   mqtt.init();
   display.show_loading_line("MQTT", "OK", 4);
@@ -115,6 +118,7 @@ void loop() {
 
   // Refresh display
   if (its_time_to_refresh_display()){
+    TelnetStream.println("*Refresh display*");
     led.switch_left_on();
     get_fresh_sensor_values();
     display.show_title();
@@ -124,7 +128,9 @@ void loop() {
 
   // Send data via MQTT
   if (its_time_to_send_data()){
+    TelnetStream.println("*Publishing data*");
     led.switch_right_on();
+    get_fresh_sensor_values();
     mqtt.send_data(T_out, T_in, P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt);
     led.switch_right_off();
   }
@@ -139,6 +145,7 @@ void loop() {
 
 
 void get_fresh_sensor_values(){
+  TelnetStream.println("  Get fresh sensor values:");
   T_in  = (status_T_in)  ? sensors.get_T_in()  : -100;
   T_out = (status_T_out) ? sensors.get_T_out() : -100;
   P = (status_P) ? sensors.get_P() : -100;

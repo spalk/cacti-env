@@ -3,6 +3,7 @@
   Created by Dmitry Natkha, October 18, 2020.
 */
 
+#include <TelnetStream.h>
 #include "MQTT.h"
 #include "Relay.h"
 
@@ -86,7 +87,12 @@ void MQTT::publish(
 
         // publish
         client.publish(full_topic, value_char);
+        TelnetStream.print("  ");
+        TelnetStream.print(full_topic);
+        TelnetStream.print(" => ");
+        TelnetStream.println(value_char);
     };
+    
 }
 
 
@@ -100,25 +106,35 @@ static void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("], ");
     Serial.println(message);
 
+    TelnetStream.print("! Message arrived on topic: [");
+    TelnetStream.print(topic);
+    TelnetStream.print("], ");
+    TelnetStream.println(message);
+
     if (message == "reboot"){
+        TelnetStream.print("  REBOOTING...");
         ESP.restart();
     } 
 
     // relay 1
     else if (message == "relay_1_on"){
         Serial.print("Relay 1 switching on...");
+        TelnetStream.print("  Relay 1 switching ON...");
         rel.switch_alfa_on();
     } else if (message == "relay_1_off"){
         Serial.print("Relay 1 switching off...");
+        TelnetStream.print("  Relay 1 switching OFF...");
         rel.switch_alfa_off();
     } 
 
     // relay 2
     else if (message == "relay_2_on"){
         Serial.print("Relay 2 switching on...");
+        TelnetStream.print("  Relay 2 switching ON...");
         rel.switch_beta_on();
     } else if (message == "relay_2_off"){
         Serial.print("Relay 2 switching off...");
+        TelnetStream.print("  Relay 2 switching OFF...");
         rel.switch_beta_off();
     } 
     

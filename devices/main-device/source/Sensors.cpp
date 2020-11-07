@@ -3,7 +3,9 @@
   Created by Dmitry Natkha, October 14, 2020.
 */
 
+#include <TelnetStream.h>
 #include "Sensors.h"
+
 
 
 Sensors::Sensors(){}
@@ -16,7 +18,6 @@ void Sensors::init(){
     Wire.begin(21, 22);
     bh1750_a_status = bh1750_a.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23, &Wire); //addr to gnd
     bh1750_b_status = bh1750_b.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x5C, &Wire); //addr to 3v3
-
 }
 
 
@@ -90,33 +91,39 @@ bool Sensors::get_S_beta_status(){
 
 float Sensors::get_T_in(){
     float result = bme.readTemperature();
+    TelnetStream.println("    BME280 Temper = " + String(result));
     return result;
 }
 
 int Sensors::get_P(){
     float result = bme.readPressure() / 100.0F * 0.75;
+    TelnetStream.println("    BME280 Pressu = " + String(result));
     return int(result);
 }
 
 int Sensors::get_H(){
     float result = bme.readHumidity();
+    TelnetStream.println("    BME280 Humidi = " + String(result));
     return int(result);
 }
 
 int Sensors::get_L_alfa(){
     float result;
     result = bh1750_a.readLightLevel();
+    TelnetStream.println("    Light alfa  = " + String(result));
     return int(result);
 }
 
 int Sensors::get_L_beta(){
     float result;
     result = bh1750_b.readLightLevel();
+    TelnetStream.println("    Light beta  = " + String(result));
     return int(result);
 }
 
 int Sensors::get_S_alfa_volt(){
     int result = Sensors::get_average_analogRead(SM_PIN_ALFA, 10);
+    TelnetStream.println("    Soil alfa V = " + String(result));
     return result;
 }
 
@@ -124,11 +131,13 @@ int Sensors::get_S_alfa_perc(){
     int value_volt = Sensors::get_S_alfa_volt();
     int result;
     result = map(result, AIR_VALUE_ALFA, WATER_VALUE_ALFA, 0, 100);
+    TelnetStream.println("    Soil alfa % = " + String(result));
     return result;
 }
 
 int Sensors::get_S_beta_volt(){
     int result = Sensors::get_average_analogRead(SM_PIN_BETA, 10);
+    TelnetStream.println("    Soil beta V = " + String(result));
     return result;
 }
 
@@ -136,6 +145,7 @@ int Sensors::get_S_beta_perc(){
     int value_volt = Sensors::get_S_beta_volt();
     int result;
     result = map(result, AIR_VALUE_BETA, WATER_VALUE_BETA, 0, 100);
+    TelnetStream.println("    Soil beta % = " + String(result));
     return result;
 }
 
@@ -175,6 +185,7 @@ float Sensors::get_T_out(){
     else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
     else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
     celsius = (float)raw / 16.0;
+    TelnetStream.println("    DS18b20 tem = " + String(celsius));
     return celsius;
 }
 

@@ -8,7 +8,7 @@
 
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
-#include <TelnetStream.h>
+
 #include "credentials.h"
 
 // WiFi information is stored in credentials.h file
@@ -76,7 +76,6 @@ void setupOTA(const char* nameprefix) {
   });
 
   ArduinoOTA.begin();
-  TelnetStream.begin();
 
   Serial.println("OTA Initialized");
   Serial.print("IP address: ");

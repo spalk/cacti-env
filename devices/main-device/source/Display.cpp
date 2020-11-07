@@ -142,9 +142,9 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     if (s1 == -100) {
         lcd.print(nodata);
     }else if (s1 < 0){
-        lcd.print(0);    
+        lcd.print("< 0");    
     } else if (s1 > 99){
-        lcd.print(100);    
+        lcd.print(">99");    
     } else {
         lcd.print(s1);    
     }
@@ -164,9 +164,9 @@ void Display::show_main_page(float t_out, float t_in, int p, int h, int l1, int 
     if (s2 == -100) {
         lcd.print(nodata);
     }else if (s2 < 0){
-        lcd.print(0);    
+        lcd.print("< 0");    
     } else if (s2 > 99){
-        lcd.print(100);    
+        lcd.print(">99");    
     } else {
         lcd.print(s2);    
     }
@@ -182,7 +182,7 @@ void Display::show_loading_line(String task, String status, int line){
     int num_points = 14 - task.length() - status.length();
     for (int i = 0; i < num_points; i++){
         lcd.print(".");
-        delay(random(200, 500));
+        delay(random(50, 300));
     }
     lcd.print(status);
     delay(700);
