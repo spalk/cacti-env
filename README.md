@@ -45,18 +45,21 @@ For light deficiency compensation are used artificial grow lights. For temperatu
 ## How it works 
 ![Cacti-Env Main Scheme](static/cacti-env_main_scheme.jpg)
 
-1. Main device is multi-sensor electronic tool, based on ESP32 microchip. It provides the majority of information about environment condition by publishing it via MQTT protocol using Wi-Fi. It also shows all current values on built-in display with backlight.
-<img src="static/cacti-env_main-device_in_work.jpg" width="400">
- 
-2. Node-Red is subscribed to all sensor subjects. It implements several functions:
+1. **Main device** is multi-sensor electronic tool, based on ESP32 microchip. It provides the majority of information about environment condition by publishing it via MQTT protocol using Wi-Fi. It also shows all current values on built-in display with backlight.
+    <p align="center">
+        <img src="static/cacti-env_main-device_in_work.jpg" width="460">
+    </p>
+
+2. **Node-Red** is subscribed to all sensor subjects. It implements several functions:
     - validates values and save it to database InfluxDB;
     - analyzes values and can send signal to on/off relays to normalize environment conditions if it's needed.
     - calculat additional data such as Sun altitude and azimuth for more accurate light condition assessment   
-3. Grafana beautifully shows all collected data and how efficient automation works.  If some parameter is out of normal range, it can send notification via Telegram Messenger.
+3. **Grafana** beautifully shows all collected data and how efficient automation works.  If some parameter is out of normal range, it can send notification via Telegram Messenger.
 4. Additional device **Publisher** is optional. One or more can be used if information from main device is not enough. It is just a box with esp8266 controller and sensor, one or more.  
 5. Additional device **Informer** is just for more convenience. It shows actual value on bright informative display. It also based on esp8266 microcontroller and has infrared motion sensor (PIR) to extend life time of LED-display.
-<img src="devices/informer/static/informer_small.jpg" width="400">
-  
+    <p align="center">
+        <img src="devices/informer/static/informer_small.jpg" width="460">
+    </p>
   
 ## Some data examples in Grafana representation:
 
