@@ -46,8 +46,7 @@ For light deficiency compensation are used artificial grow lights. For temperatu
 ![Cacti-Env Main Scheme](static/cacti-env_main_scheme.jpg)
 
 1. Main device is multi-sensor electronic tool, based on ESP32 microchip. It provides the majority of information about environment condition by publishing it via MQTT protocol using Wi-Fi. It also shows all current values on built-in display with backlight.
-![Cacti-Env Main Device](devices/main-device/static/cacti-env_main-device_final_on.jpg?s=50)
-![Cacti-Env Main Device](devices/main-device/static/cacti-env_main-device_final_on.jpg)
+<img src="static/cacti-env_main-device_in_work.jpg" width="400">
  
 2. Node-Red is subscribed to all sensor subjects. It implements several functions:
     - validates values and save it to database InfluxDB;
@@ -56,7 +55,7 @@ For light deficiency compensation are used artificial grow lights. For temperatu
 3. Grafana beautifully shows all collected data and how efficient automation works.  If some parameter is out of normal range, it can send notification via Telegram Messenger.
 4. Additional device **Publisher** is optional. One or more can be used if information from main device is not enough. It is just a box with esp8266 controller and sensor, one or more.  
 5. Additional device **Informer** is just for more convenience. It shows actual value on bright informative display. It also based on esp8266 microcontroller and has infrared motion sensor (PIR) to extend life time of LED-display.
-![Informer Device](devices/informer/static/informer_small.jpg){:height="50%" width="50%"}
+<img src="devices/informer/static/informer_small.jpg" width="400">
   
   
 ## Some data examples in Grafana representation:
