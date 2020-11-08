@@ -130,7 +130,7 @@ int Sensors::get_S_alfa_volt(){
 int Sensors::get_S_alfa_perc(){
     int value_volt = Sensors::get_S_alfa_volt();
     int result;
-    result = map(result, AIR_VALUE_ALFA, WATER_VALUE_ALFA, 0, 100);
+    result = map(value_volt, AIR_VALUE_ALFA, WATER_VALUE_ALFA, 0, 100);
     TelnetStream.println("    Soil alfa % = " + String(result));
     return result;
 }
@@ -144,7 +144,7 @@ int Sensors::get_S_beta_volt(){
 int Sensors::get_S_beta_perc(){
     int value_volt = Sensors::get_S_beta_volt();
     int result;
-    result = map(result, AIR_VALUE_BETA, WATER_VALUE_BETA, 0, 100);
+    result = map(value_volt, AIR_VALUE_BETA, WATER_VALUE_BETA, 0, 100);
     TelnetStream.println("    Soil beta % = " + String(result));
     return result;
 }

@@ -72,18 +72,18 @@ void MQTT::publish(
     const char* topic_tip
 ){
     if (value != -100){
-        char value_char[6];
-        bool debug = MQTT_MODE_DEBUG;
+        // convert type of value from float to char
+        char value_char[8];
+        dtostrf (value, lengthIncDecimalPoint, numVarsAfterDecimal, value_char);
+        TelnetStream.println(value_char);  
 
         // get root part of topic
+        bool debug = MQTT_MODE_DEBUG;
         const char* topic_root = (debug) ? topic_root_debug : topic_root_release;
 
         // get full topic (concatenate root and tip parts of topic)
         char full_topic[100];
         sprintf(full_topic, "%s%s", topic_root, topic_tip);
-
-        // convert type of value from float to char
-        dtostrf (value, lengthIncDecimalPoint, numVarsAfterDecimal, value_char);
 
         // publish
         client.publish(full_topic, value_char);

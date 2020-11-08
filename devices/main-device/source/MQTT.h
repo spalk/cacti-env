@@ -6,7 +6,7 @@
 #ifndef MQTT_h
 #define MQTT_h
 
-#define MQTT_MODE_DEBUG 1
+#define MQTT_MODE_DEBUG 0
 
 
 #include <WiFi.h>
@@ -41,13 +41,13 @@ class MQTT
         
         // root-part of topic 
         const char* topic_root_release =  "izm/south-balcony";
-        const char* topic_root_debug =  "test/test";
+        const char* topic_root_debug   =  "test/test";
         
         // constant end-part of topic for each parameter
         const char* topic_T_out   = "/temperature/outside";
         const char* topic_T_in    = "/temperature/inside";
-        const char* topic_P        = "/pressure";
-        const char* topic_H        = "/humidity";
+        const char* topic_P       = "/pressure";
+        const char* topic_H       = "/humidity";
         const char* topic_L_alfa  = "/light-intensity/sensor-01";
         const char* topic_L_beta  = "/light-intensity/sensor-02";
         const char* topic_S_alfa  = "/soil-moisture/sensor-01";

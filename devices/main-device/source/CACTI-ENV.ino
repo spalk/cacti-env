@@ -6,7 +6,7 @@
 #include "LED.h"
 #include "Relay.h"
 
-#define OTA_DEVICE_ID "ESP32_Cacti-Env_DEV"
+#define OTA_DEVICE_ID "Cacti-Env_Main-Device"
 
 
 Display display;
