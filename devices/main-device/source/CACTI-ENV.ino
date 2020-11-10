@@ -29,6 +29,7 @@ bool status_S_beta = false;
 // parameter values (from sensors)
 float T_out, T_in;
 int P, H, L_alfa, L_beta, S_alfa_volt, S_beta_volt, S_alfa_perc, S_beta_perc;
+float calibration_T_in = -5; // Only for display! Publishing is whithout calibration!
 
 // timers
 unsigned long time_to_refresh_display = 0;
@@ -127,7 +128,7 @@ void loop() {
     led.switch_left_on();
     get_fresh_sensor_values();
     display.show_title();
-    display.show_main_page(T_out, T_in,P, H, L_alfa, L_beta, S_alfa_perc, S_beta_perc);
+    display.show_main_page(T_out, T_in+calibration_T_in, P, H, L_alfa, L_beta, S_alfa_perc, S_beta_perc);
     led.switch_left_off();
   }
 
@@ -217,7 +218,6 @@ bool its_time_to_auto_switch_display_off(){
   bool answer;
   unsigned long time_diff;
   time_diff = millis() - time_to_auto_switch_bckl;
-  TelnetStream.println(time_diff);
   if (time_diff > auto_switch_bckl_interval){
     answer = true;
     time_to_auto_switch_bckl = millis();
