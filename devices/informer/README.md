@@ -9,7 +9,7 @@ https://www.teachmemicro.com/1-3-i2c-oled-arduino-esp8266-tutorial/
 http://oleddisplay.squix.ch/#/home
 
 - Wiring: 
-![Wemos+oled+pir wiring](wemos_oled_pir_wiring.png)
+![Wemos+oled+pir wiring](static/wemos_oled_pir_wiring.png)
 
 - Device:
-![WSS informer](informer.jpg)
+![WSS informer](static/informer_big.jpg)

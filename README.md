@@ -55,7 +55,10 @@ For light deficiency compensation are used artificial grow lights. For temperatu
     - analyzes values and can send signal to on/off relays to normalize environment conditions if it's needed.
     - calculat additional data such as Sun altitude and azimuth for more accurate light condition assessment   
 3. **Grafana** beautifully shows all collected data and how efficient automation works.  If some parameter is out of normal range, it can send notification via Telegram Messenger.
-4. Additional device **Publisher** is optional. One or more can be used if information from main device is not enough. It is just a box with esp8266 controller and sensor, one or more.  
+4. Additional device **Publisher** is optional. One or more can be used if information from main device is not enough. It is just a box with esp8266 controller and sensor, one or more.
+    <p align="center">
+        <img src="devices/publisher/static/publisher.jpg" width="460">
+    </p>  
 5. Additional device **Informer** is just for more convenience. It shows actual value on bright informative display. It also based on esp8266 microcontroller and has infrared motion sensor (PIR) to extend life time of LED-display.
     <p align="center">
         <img src="devices/informer/static/informer_small.jpg" width="460">
