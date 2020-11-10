@@ -37,6 +37,8 @@ unsigned long time_to_send_data = 0;
 const long send_data_interval = 60000; // send data to broker every 1 min
 unsigned long time_to_switch_bckl = 0;
 const long switch_bckl_interval = 500;
+unsigned long time_to_auto_switch_bckl = 0;
+const long auto_switch_bckl_interval = 300000;
 
 // button
 const int BUTTON_PIN = 35;
@@ -46,6 +48,7 @@ void get_fresh_sensor_values();
 bool its_time_to_refresh_display();
 bool its_time_to_send_data();
 bool its_time_to_switch_bckl();
+bool its_time_to_auto_switch_display_off();
 String IpAddress2String(const IPAddress& ipAddress);
 
 
@@ -109,6 +112,8 @@ void setup() {
 
   // button init
   pinMode(BUTTON_PIN, INPUT);
+
+  time_to_auto_switch_bckl = 0;
 }
 
 void loop() {
@@ -139,6 +144,13 @@ void loop() {
   if (digitalRead(BUTTON_PIN)){
     if (its_time_to_switch_bckl()){
       display.switch_backlight();
+    }
+  }
+
+  // Auto backlight OFF
+  if (display.get_backlight_status()){
+    if (its_time_to_auto_switch_display_off()){
+      display.turn_backlight_off();
     }
   }
 }
@@ -194,6 +206,21 @@ bool its_time_to_switch_bckl(){
   if (time_diff > switch_bckl_interval){
     answer = true;
     time_to_switch_bckl = millis();
+  } else {
+    answer = false;
+  }
+  return answer;
+}
+
+
+bool its_time_to_auto_switch_display_off(){
+  bool answer;
+  unsigned long time_diff;
+  time_diff = millis() - time_to_auto_switch_bckl;
+  TelnetStream.println(time_diff);
+  if (time_diff > auto_switch_bckl_interval){
+    answer = true;
+    time_to_auto_switch_bckl = millis();
   } else {
     answer = false;
   }
