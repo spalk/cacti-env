@@ -12,18 +12,20 @@ Relay::Relay(){}
 void Relay::init(){
     pinMode (RELAY_ALFA_PIN, OUTPUT);
     pinMode (RELAY_BETA_PIN, OUTPUT);
+    Relay::switch_alfa_off();
+    Relay::switch_beta_off();
 }
 
 
 //  Relay Alfa
 
 void Relay::switch_alfa_on(){
-    digitalWrite (RELAY_ALFA_PIN, HIGH);
+    digitalWrite (RELAY_ALFA_PIN, LOW);
     status_relay_alfa = true;
 }
 
 void Relay::switch_alfa_off(){
-    digitalWrite (RELAY_ALFA_PIN, LOW);
+    digitalWrite (RELAY_ALFA_PIN, HIGH);
     status_relay_alfa = false;
 }
 
@@ -31,12 +33,12 @@ void Relay::switch_alfa_off(){
 //  Relay Beta
 
 void Relay::switch_beta_on(){
-    digitalWrite (RELAY_BETA_PIN, HIGH);
+    digitalWrite (RELAY_BETA_PIN, LOW);
     status_relay_beta = true;
 }
 
 void Relay::switch_beta_off(){
-    digitalWrite (RELAY_BETA_PIN, LOW);
+    digitalWrite (RELAY_BETA_PIN, HIGH);
     status_relay_beta = false;
 }
 

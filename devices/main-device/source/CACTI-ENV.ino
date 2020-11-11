@@ -39,7 +39,7 @@ const long send_data_interval = 60000; // send data to broker every 1 min
 unsigned long time_to_switch_bckl = 0;
 const long switch_bckl_interval = 500;
 unsigned long time_to_auto_switch_bckl = 0;
-const long auto_switch_bckl_interval = 300000;
+const long auto_switch_bckl_interval = 120000; // auto backlight off after 3 min
 
 // button
 const int BUTTON_PIN = 35;
@@ -114,7 +114,6 @@ void setup() {
   // button init
   pinMode(BUTTON_PIN, INPUT);
 
-  time_to_auto_switch_bckl = 0;
 }
 
 void loop() {
