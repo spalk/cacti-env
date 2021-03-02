@@ -1,0 +1,305 @@
+[
+    {
+        "id": "2b425b83.126aac",
+        "type": "tab",
+        "label": "sun",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3afabd14.beb43a",
+        "type": "sun-position",
+        "z": "2b425b83.126aac",
+        "name": "sun position",
+        "positionConfig": "d9f05235.a14ae8",
+        "rules": [],
+        "onlyOnChange": "true",
+        "topic": "",
+        "outputs": 1,
+        "start": "",
+        "startType": "none",
+        "startOffset": 0,
+        "startOffsetType": "none",
+        "startOffsetMultiplier": 60000,
+        "end": "",
+        "endType": "none",
+        "endOffset": 0,
+        "endOffsetType": "none",
+        "endOffsetMultiplier": 60000,
+        "x": 350,
+        "y": 160,
+        "wires": [
+            [
+                "ddd2a14c.78d0f8",
+                "44bce100.9851c"
+            ]
+        ]
+    },
+    {
+        "id": "ebf6e67e.22a848",
+        "type": "inject",
+        "z": "2b425b83.126aac",
+        "name": "every 1 min",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 280,
+        "wires": [
+            [
+                "3afabd14.beb43a",
+                "4883db7b.523d8c"
+            ]
+        ]
+    },
+    {
+        "id": "1d7b972f.00a439",
+        "type": "debug",
+        "z": "2b425b83.126aac",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "4a19f9ab.0e2e3",
+        "type": "debug",
+        "z": "2b425b83.126aac",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "ddd2a14c.78d0f8",
+        "type": "function",
+        "z": "2b425b83.126aac",
+        "name": "tags&fields azimuth",
+        "func": "tags = new Object()\ntags.object = \"sun\"\ntags.parameter = \"azimuth\"\n\nfields = new Object()\nfields.value = msg.payload.azimuth\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 570,
+        "y": 100,
+        "wires": [
+            [
+                "1d7b972f.00a439",
+                "fee3ffc6.48569"
+            ]
+        ]
+    },
+    {
+        "id": "44bce100.9851c",
+        "type": "function",
+        "z": "2b425b83.126aac",
+        "name": "tags&fields altitude",
+        "func": "tags = new Object()\ntags.object = \"sun\"\ntags.parameter = \"altitude\"\n\nfields = new Object()\nfields.value = msg.payload.altitude\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 570,
+        "y": 220,
+        "wires": [
+            [
+                "4a19f9ab.0e2e3",
+                "f1b23333.bc9b28"
+            ]
+        ]
+    },
+    {
+        "id": "fee3ffc6.48569",
+        "type": "influxdb out",
+        "z": "2b425b83.126aac",
+        "influxdb": "5aa4929a.ceae0c",
+        "name": "position to sun",
+        "measurement": "position",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 800,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "f1b23333.bc9b28",
+        "type": "influxdb out",
+        "z": "2b425b83.126aac",
+        "influxdb": "5aa4929a.ceae0c",
+        "name": "position to sun",
+        "measurement": "position",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 800,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "4883db7b.523d8c",
+        "type": "moon-position",
+        "z": "2b425b83.126aac",
+        "name": "",
+        "positionConfig": "d9f05235.a14ae8",
+        "rules": [],
+        "onlyOnChange": "true",
+        "topic": "",
+        "outputs": 1,
+        "x": 360,
+        "y": 400,
+        "wires": [
+            [
+                "2693d4be.5882d4",
+                "9c26e47.b050a18"
+            ]
+        ]
+    },
+    {
+        "id": "2693d4be.5882d4",
+        "type": "function",
+        "z": "2b425b83.126aac",
+        "name": "tags&fields azimuth",
+        "func": "tags = new Object()\ntags.object = \"moon\"\ntags.parameter = \"azimuth\"\n\nfields = new Object()\nfields.value = msg.payload.azimuth\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 570,
+        "y": 340,
+        "wires": [
+            [
+                "c58ce791.5d9788",
+                "cdd635a2.81f61"
+            ]
+        ]
+    },
+    {
+        "id": "9c26e47.b050a18",
+        "type": "function",
+        "z": "2b425b83.126aac",
+        "name": "tags&fields altitude",
+        "func": "tags = new Object()\ntags.object = \"moon\"\ntags.parameter = \"altitude\"\n\nfields = new Object()\nfields.value = msg.payload.altitude\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 570,
+        "y": 460,
+        "wires": [
+            [
+                "dd11d7c3.dd6be",
+                "12ad5a10.8d677e"
+            ]
+        ]
+    },
+    {
+        "id": "c58ce791.5d9788",
+        "type": "debug",
+        "z": "2b425b83.126aac",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "dd11d7c3.dd6be",
+        "type": "debug",
+        "z": "2b425b83.126aac",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "cdd635a2.81f61",
+        "type": "influxdb out",
+        "z": "2b425b83.126aac",
+        "influxdb": "5aa4929a.ceae0c",
+        "name": "position of moon to sun db",
+        "measurement": "position",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 840,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "12ad5a10.8d677e",
+        "type": "influxdb out",
+        "z": "2b425b83.126aac",
+        "influxdb": "5aa4929a.ceae0c",
+        "name": "position of moon to sun db",
+        "measurement": "position",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 840,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "d9f05235.a14ae8",
+        "type": "position-config",
+        "z": "",
+        "name": "Izmailovo",
+        "isValide": "true",
+        "longitude": "0",
+        "latitude": "0",
+        "angleType": "deg",
+        "timeZoneOffset": "99",
+        "timeZoneDST": "0",
+        "stateTimeFormat": "3",
+        "stateDateFormat": "12"
+    },
+    {
+        "id": "5aa4929a.ceae0c",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "sun",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    }
+]

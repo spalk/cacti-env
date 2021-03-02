@@ -1,0 +1,1275 @@
+[
+    {
+        "id": "66693cc6.19652c",
+        "type": "tab",
+        "label": "cacti-env sensors",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "e247e187.8cd3d8",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "d50def1a.a35a5",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "DS18B20",
+        "topic": "izm/south-balcony/temperature/outside",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 120,
+        "y": 140,
+        "wires": [
+            [
+                "eb435ae1.a95df"
+            ]
+        ]
+    },
+    {
+        "id": "291d88a6.c4694",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "BME280-T",
+        "topic": "izm/south-balcony/temperature/inside",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 120,
+        "y": 460,
+        "wires": [
+            [
+                "744a5a4c.533a6c"
+            ]
+        ]
+    },
+    {
+        "id": "c98a8cd8.e55ce",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "BME280-P",
+        "topic": "izm/south-balcony/pressure",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 120,
+        "y": 600,
+        "wires": [
+            [
+                "25cc71cc.27e6be"
+            ]
+        ]
+    },
+    {
+        "id": "e2c2d8a8.cc6b28",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "BH1750  #1",
+        "topic": "izm/south-balcony/light-intensity/sensor-01",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 120,
+        "y": 820,
+        "wires": [
+            [
+                "61f13fb9.a7d5e",
+                "4701cc8f.0e3d3c"
+            ]
+        ]
+    },
+    {
+        "id": "f91e9081.48ddb8",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "BH1750  #2",
+        "topic": "izm/south-balcony/light-intensity/sensor-02",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 120,
+        "y": 900,
+        "wires": [
+            [
+                "9ae6c88d.87aef8",
+                "a40ff311.2167f8"
+            ]
+        ]
+    },
+    {
+        "id": "23d1c595.a58942",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "Soil Moist #1",
+        "topic": "izm/south-balcony/soil-moisture/sensor-01",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 130,
+        "y": 980,
+        "wires": [
+            [
+                "11c8e844.1f18f8"
+            ]
+        ]
+    },
+    {
+        "id": "deec0124.a564c",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "Soil Moist #2",
+        "topic": "izm/south-balcony/soil-moisture/sensor-02",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 130,
+        "y": 1180,
+        "wires": [
+            [
+                "b9810563.9ab098"
+            ]
+        ]
+    },
+    {
+        "id": "eb435ae1.a95df",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num + last_val",
+        "func": "msg.payload = Number(msg.payload); \n\nmsg.last_value = context.get('last_value') || msg.payload;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 320,
+        "y": 140,
+        "wires": [
+            [
+                "67cf125.17464ec",
+                "8fdbefe7.579aa",
+                "f2933dda.e6cd1"
+            ]
+        ]
+    },
+    {
+        "id": "744a5a4c.533a6c",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num + Calibration",
+        "func": "msg.payload = Number(msg.payload)-5;  // calibration -5 degress\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 330,
+        "y": 460,
+        "wires": [
+            [
+                "84597c4e.e7f4d8"
+            ]
+        ]
+    },
+    {
+        "id": "25cc71cc.27e6be",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 290,
+        "y": 600,
+        "wires": [
+            [
+                "ea23d8d7.4478",
+                "ac86140a.1daaa8"
+            ]
+        ]
+    },
+    {
+        "id": "61f13fb9.a7d5e",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 290,
+        "y": 820,
+        "wires": [
+            [
+                "156f8d02.210c1b"
+            ]
+        ]
+    },
+    {
+        "id": "9ae6c88d.87aef8",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 290,
+        "y": 900,
+        "wires": [
+            [
+                "7b6ab08c.b46188"
+            ]
+        ]
+    },
+    {
+        "id": "11c8e844.1f18f8",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 290,
+        "y": 980,
+        "wires": [
+            [
+                "ec44f16b.b368c",
+                "7405bde3.e6d16c"
+            ]
+        ]
+    },
+    {
+        "id": "b9810563.9ab098",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 290,
+        "y": 1180,
+        "wires": [
+            [
+                "88938066.140838",
+                "60340ca7.c27afc"
+            ]
+        ]
+    },
+    {
+        "id": "67cf125.17464ec",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload;\n\ntags = new Object();\ntags.side = \"outside\";\n\nfields = new Object();\nfields.value = value;\n\ncontext.set('last_value', value);\n\nmsg.payload = [fields, tags];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 140,
+        "wires": [
+            [
+                "80467347.4f76",
+                "e247e187.8cd3d8"
+            ]
+        ]
+    },
+    {
+        "id": "80467347.4f76",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "temperature",
+        "measurement": "temperature",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 950,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "7da2b240.775e04",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.side = \"inside\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 460,
+        "wires": [
+            [
+                "8957d7da.fc5e98",
+                "4bac29dc.5b3918"
+            ]
+        ]
+    },
+    {
+        "id": "8957d7da.fc5e98",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "temperature",
+        "measurement": "temperature",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 950,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "eec32a44.4f065",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "preassure",
+        "measurement": "preassure",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 940,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "92d510e6.a62b4",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "light",
+        "measurement": "light",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 930,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "6c091ad4.250884",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "light",
+        "measurement": "light",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 930,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "d2199687.723a3",
+        "type": "mqtt in",
+        "z": "66693cc6.19652c",
+        "name": "BME280-H",
+        "topic": "izm/south-balcony/humidity",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 120,
+        "y": 700,
+        "wires": [
+            [
+                "f8e3d9ef.6d1db8"
+            ]
+        ]
+    },
+    {
+        "id": "f8e3d9ef.6d1db8",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 290,
+        "y": 700,
+        "wires": [
+            [
+                "b03fb146.d134c",
+                "93a226ff.f250a"
+            ]
+        ]
+    },
+    {
+        "id": "e8e60223.c8aba",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "humidity",
+        "measurement": "humidity",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 940,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "156f8d02.210c1b",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.sensor = \"alfa\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 820,
+        "wires": [
+            [
+                "92d510e6.a62b4",
+                "36eaab5d.ce44a4"
+            ]
+        ]
+    },
+    {
+        "id": "7b6ab08c.b46188",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.sensor = \"beta\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 900,
+        "wires": [
+            [
+                "6c091ad4.250884",
+                "e6515da8.198258"
+            ]
+        ]
+    },
+    {
+        "id": "ec44f16b.b368c",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.sensor = \"alfa\"\ntags.units = \"V\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 980,
+        "wires": [
+            [
+                "bd05e3cb.af02f8",
+                "14b9d7c6.a7ea98"
+            ]
+        ]
+    },
+    {
+        "id": "bd05e3cb.af02f8",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "soil-moister",
+        "measurement": "soil-moister",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 950,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "88938066.140838",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.sensor = \"beta\"\ntags.units = \"V\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 1180,
+        "wires": [
+            [
+                "8e61d39a.e54318",
+                "e0cb5f9a.63f1f8"
+            ]
+        ]
+    },
+    {
+        "id": "8e61d39a.e54318",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "soil-moister",
+        "measurement": "soil-moister",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 950,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "4bac29dc.5b3918",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "ea23d8d7.4478",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 510,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "b03fb146.d134c",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 510,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "36eaab5d.ce44a4",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "e6515da8.198258",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "14b9d7c6.a7ea98",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "e0cb5f9a.63f1f8",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "4701cc8f.0e3d3c",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 290,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "a40ff311.2167f8",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 290,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "7405bde3.e6d16c",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "percent calc",
+        "func": "maxV = 2510; // 0%\nminV = 2100; // 100%\ncurV = Number(msg.payload);\n\ncurPerc = (maxV - curV)/((maxV - minV)/100);\ncurPerc = Math.round(curPerc);\nif (curPerc < 0){\n    curPerc = 0;\n}\n\nmsg.payload = curPerc;\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 510,
+        "y": 1060,
+        "wires": [
+            [
+                "e6303d91.4be9c8",
+                "df6ff8b1.ba1f7"
+            ]
+        ]
+    },
+    {
+        "id": "df6ff8b1.ba1f7",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.sensor = \"alfa\"\ntags.units = \"percent\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 1060,
+        "wires": [
+            [
+                "1f6b9836.faec",
+                "2738cc8f.90524c"
+            ]
+        ]
+    },
+    {
+        "id": "1f6b9836.faec",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "soil-moister",
+        "measurement": "soil-moister",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 950,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "2738cc8f.90524c",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "e6303d91.4be9c8",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "60340ca7.c27afc",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "percent calc",
+        "func": "maxV = 2420; // 0%\nminV = 1850; // 100%\ncurV = Number(msg.payload);\n\ncurPerc = (maxV - curV)/((maxV - minV)/100);\ncurPerc = Math.round(curPerc);\nif (curPerc < 0){\n    curPerc = 0;\n}\n\nmsg.payload = curPerc;\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 510,
+        "y": 1260,
+        "wires": [
+            [
+                "c39edb0c.b1b9f",
+                "22d33330.500e04"
+            ]
+        ]
+    },
+    {
+        "id": "c39edb0c.b1b9f",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "194b2ca9.0a873b",
+        "type": "influxdb out",
+        "z": "66693cc6.19652c",
+        "influxdb": "882a6508.9d4278",
+        "name": "soil-moister",
+        "measurement": "soil-moister",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 950,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "22d33330.500e04",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.sensor = \"beta\"\ntags.units = \"percent\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 1260,
+        "wires": [
+            [
+                "194b2ca9.0a873b",
+                "60486642.166a08"
+            ]
+        ]
+    },
+    {
+        "id": "60486642.166a08",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "93a226ff.f250a",
+        "type": "switch",
+        "z": "66693cc6.19652c",
+        "name": "filter ",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "100",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 490,
+        "y": 700,
+        "wires": [
+            [
+                "e8e60223.c8aba"
+            ],
+            [
+                "98c7e590.9ab25"
+            ]
+        ]
+    },
+    {
+        "id": "d607c48d.7382f",
+        "type": "e-mail",
+        "z": "66693cc6.19652c",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": false,
+        "name": "d.natxa@gmail.com",
+        "dname": "",
+        "x": 980,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "98c7e590.9ab25",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Email topic",
+        "func": "msg.topic = \"cacti-env: BME280 humidity strange value\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 740,
+        "wires": [
+            [
+                "d607c48d.7382f"
+            ]
+        ]
+    },
+    {
+        "id": "4485fc2.1e82a04",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Email topic",
+        "func": "msg.topic = \"cacti-env: BME280 pressure strange value\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 640,
+        "wires": [
+            [
+                "e03f4e65.b50e68"
+            ]
+        ]
+    },
+    {
+        "id": "ac86140a.1daaa8",
+        "type": "switch",
+        "z": "66693cc6.19652c",
+        "name": "filter ",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "600",
+                "vt": "num",
+                "v2": "800",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 490,
+        "y": 600,
+        "wires": [
+            [
+                "eec32a44.4f065",
+                "db204c1e.08b018"
+            ],
+            [
+                "4485fc2.1e82a04"
+            ]
+        ]
+    },
+    {
+        "id": "e03f4e65.b50e68",
+        "type": "e-mail",
+        "z": "66693cc6.19652c",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": false,
+        "name": "d.natxa@gmail.com",
+        "dname": "",
+        "x": 980,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "2572d854.776ae8",
+        "type": "comment",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "info": "qdwyzuqakypgpalz",
+        "x": 960,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "ae2ac990.0edee",
+        "type": "switch",
+        "z": "66693cc6.19652c",
+        "name": "filter ",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "-0.1",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [],
+            [
+                "7632989a.2fff1"
+            ]
+        ]
+    },
+    {
+        "id": "7632989a.2fff1",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "last&cur val compare",
+        "func": "var diff = msg.last_value - msg.payload;\n\nif (Math.abs(diff) > 1){\n    msg.skip = true;\n} else {\n    msg.skip = false;\n}\n\ntags = new Object();\ntags.side = \"outside\";\n\nfields = new Object();\nfields.value = msg.payload;\n\ncontext.set('last_value', msg.payload);\n\nmsg.payload = [fields, tags];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 520,
+        "y": 240,
+        "wires": [
+            [
+                "2b313dd.ce4bac2"
+            ]
+        ]
+    },
+    {
+        "id": "2b313dd.ce4bac2",
+        "type": "switch",
+        "z": "66693cc6.19652c",
+        "name": "filter ",
+        "property": "skip",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "false",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 730,
+        "y": 240,
+        "wires": [
+            [
+                "67cf125.17464ec"
+            ],
+            [
+                "3da9f47.7cc4d0c"
+            ]
+        ]
+    },
+    {
+        "id": "3da9f47.7cc4d0c",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Email topic",
+        "func": "msg.topic = \"cacti-env: DS18b20 strange value\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 910,
+        "y": 300,
+        "wires": [
+            [
+                "f48a1627.66edf8"
+            ]
+        ]
+    },
+    {
+        "id": "f48a1627.66edf8",
+        "type": "e-mail",
+        "z": "66693cc6.19652c",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": false,
+        "name": "d.natxa@gmail.com",
+        "dname": "",
+        "x": 1120,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "84597c4e.e7f4d8",
+        "type": "switch",
+        "z": "66693cc6.19652c",
+        "name": "filter ",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "50",
+                "vt": "num",
+                "v2": "-50",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 550,
+        "y": 460,
+        "wires": [
+            [
+                "7da2b240.775e04"
+            ],
+            [
+                "e8f70ae8.05fea8"
+            ]
+        ]
+    },
+    {
+        "id": "d9ef40d2.78b09",
+        "type": "e-mail",
+        "z": "66693cc6.19652c",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": false,
+        "name": "d.natxa@gmail.com",
+        "dname": "",
+        "x": 980,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "e8f70ae8.05fea8",
+        "type": "function",
+        "z": "66693cc6.19652c",
+        "name": "Email topic",
+        "func": "msg.topic = \"cacti-env: BME280 temperature strange value\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 540,
+        "wires": [
+            [
+                "d9ef40d2.78b09"
+            ]
+        ]
+    },
+    {
+        "id": "8fdbefe7.579aa",
+        "type": "change",
+        "z": "66693cc6.19652c",
+        "name": "set global t_out",
+        "rules": [
+            {
+                "t": "set",
+                "p": "t_out",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 80,
+        "wires": [
+            [
+                "c9319ad6.50a948"
+            ]
+        ]
+    },
+    {
+        "id": "db204c1e.08b018",
+        "type": "change",
+        "z": "66693cc6.19652c",
+        "name": "set global pressure",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pressure",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 530,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c9319ad6.50a948",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "f2933dda.e6cd1",
+        "type": "debug",
+        "z": "66693cc6.19652c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "d8f0d2bb.f954a8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mosquitto [docker]",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "882a6508.9d4278",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "cacti",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    }
+]

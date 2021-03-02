@@ -1,0 +1,918 @@
+[
+    {
+        "id": "4c6c1450.37cd1c",
+        "type": "tab",
+        "label": "Auto Grow Light",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "105dedd0.f8a492",
+        "type": "inject",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 780,
+        "wires": [
+            [
+                "b28d33aa.b4731"
+            ]
+        ]
+    },
+    {
+        "id": "e653cfdd.06ea08",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "14h range",
+        "info": "",
+        "x": 380,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "4a5860b0.bdc1e8",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "sunrise/set",
+        "info": "",
+        "x": 640,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "306453bd.d89bb4",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "azimuth range",
+        "info": "",
+        "x": 950,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "a9066d4c.cd3ea8",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "global light level",
+        "info": "",
+        "x": 1260,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "b77ef8db.57cc48",
+        "type": "within-time-switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "between sunrise and sunset?",
+        "nameInt": "",
+        "positionConfig": "d9f05235.a14ae8",
+        "startTime": "sunrise",
+        "startTimeType": "pdsTime",
+        "startOffset": 0,
+        "startOffsetType": "none",
+        "startOffsetMultiplier": 60000,
+        "endTime": "sunset",
+        "endTimeType": "pdsTime",
+        "endOffset": 0,
+        "endOffsetType": "none",
+        "endOffsetMultiplier": 60000,
+        "timeDays": "*",
+        "timeOnlyOddDays": false,
+        "timeOnlyEvenDays": false,
+        "timeMonths": "*",
+        "timedatestart": "",
+        "timedateend": "",
+        "propertyStart": "",
+        "propertyStartType": "none",
+        "propertyStartCompare": "true",
+        "propertyStartThreshold": "",
+        "propertyStartThresholdType": "num",
+        "startTimeAlt": "",
+        "startTimeAltType": "entered",
+        "startOffsetAlt": 0,
+        "startOffsetAltType": "none",
+        "startOffsetAltMultiplier": 60000,
+        "propertyEnd": "",
+        "propertyEndType": "none",
+        "propertyEndCompare": "true",
+        "propertyEndThreshold": "",
+        "propertyEndThresholdType": "num",
+        "endTimeAlt": "",
+        "endTimeAltType": "entered",
+        "endOffsetAlt": 0,
+        "endOffsetAltType": "none",
+        "endOffsetAltMultiplier": 60000,
+        "tsCompare": "0",
+        "x": 640,
+        "y": 720,
+        "wires": [
+            [
+                "e93d0ef1.eb63c8"
+            ],
+            [
+                "4534aaad.59025c"
+            ]
+        ]
+    },
+    {
+        "id": "b28d33aa.b4731",
+        "type": "within-time-switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "between 8 and 18?",
+        "nameInt": "",
+        "positionConfig": "d9f05235.a14ae8",
+        "startTime": "8:00",
+        "startTimeType": "entered",
+        "startOffset": 0,
+        "startOffsetType": "none",
+        "startOffsetMultiplier": 60000,
+        "endTime": "18:00",
+        "endTimeType": "entered",
+        "endOffset": 0,
+        "endOffsetType": "none",
+        "endOffsetMultiplier": 60000,
+        "timeDays": "*",
+        "timeOnlyOddDays": false,
+        "timeOnlyEvenDays": false,
+        "timeMonths": "*",
+        "timedatestart": "",
+        "timedateend": "",
+        "propertyStart": "",
+        "propertyStartType": "none",
+        "propertyStartCompare": "true",
+        "propertyStartThreshold": "",
+        "propertyStartThresholdType": "num",
+        "startTimeAlt": "",
+        "startTimeAltType": "entered",
+        "startOffsetAlt": 0,
+        "startOffsetAltType": "none",
+        "startOffsetAltMultiplier": 60000,
+        "propertyEnd": "",
+        "propertyEndType": "none",
+        "propertyEndCompare": "true",
+        "propertyEndThreshold": "",
+        "propertyEndThresholdType": "num",
+        "endTimeAlt": "",
+        "endTimeAltType": "entered",
+        "endOffsetAlt": 0,
+        "endOffsetAltType": "none",
+        "endOffsetAltMultiplier": 60000,
+        "tsCompare": "0",
+        "x": 390,
+        "y": 780,
+        "wires": [
+            [
+                "b77ef8db.57cc48"
+            ],
+            [
+                "a23f6c93.1f60d"
+            ]
+        ]
+    },
+    {
+        "id": "7bdc622a.4e2f84",
+        "type": "switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "current light level",
+        "property": "grow_light_level",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "OK",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1270,
+        "y": 620,
+        "wires": [
+            [
+                "4ecb2eb3.f91cc"
+            ],
+            [
+                "f66dc5d1.0b726"
+            ]
+        ]
+    },
+    {
+        "id": "d7740824.1af7a8",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "set light level",
+        "info": "",
+        "x": 1370,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "be31a2f1.a37ca8",
+        "type": "switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "azimuth range",
+        "property": "payload.azimuth",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "100",
+                "vt": "num",
+                "v2": "190",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1040,
+        "y": 660,
+        "wires": [
+            [
+                "7bdc622a.4e2f84"
+            ],
+            [
+                "36b7ae88.052452"
+            ]
+        ]
+    },
+    {
+        "id": "e93d0ef1.eb63c8",
+        "type": "sun-position",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "positionConfig": "d9f05235.a14ae8",
+        "rules": [],
+        "onlyOnChange": "true",
+        "topic": "",
+        "outputs": 1,
+        "start": "",
+        "startType": "none",
+        "startOffset": 0,
+        "startOffsetType": "none",
+        "startOffsetMultiplier": 60000,
+        "end": "",
+        "endType": "none",
+        "endOffset": 0,
+        "endOffsetType": "none",
+        "endOffsetMultiplier": 60000,
+        "x": 870,
+        "y": 660,
+        "wires": [
+            [
+                "be31a2f1.a37ca8"
+            ]
+        ]
+    },
+    {
+        "id": "d2178b96.dbb17",
+        "type": "change",
+        "z": "4c6c1450.37cd1c",
+        "name": "Global Light Level OK",
+        "rules": [
+            {
+                "t": "set",
+                "p": "grow_light_level",
+                "pt": "global",
+                "to": "OK",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1400,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c0dbe527.346df",
+        "type": "change",
+        "z": "4c6c1450.37cd1c",
+        "name": "Global Light Level LOW",
+        "rules": [
+            {
+                "t": "set",
+                "p": "grow_light_level",
+                "pt": "global",
+                "to": "LOW",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1410,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a26b9d7c.81be8",
+        "type": "influxdb out",
+        "z": "4c6c1450.37cd1c",
+        "influxdb": "882a6508.9d4278",
+        "name": "grow-light",
+        "measurement": "grow-light",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 2420,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "604c8959.4a645",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "tags&fields",
+        "func": "tags = new Object()\ntags.grow_lamp = \"alfa\"\n\nfields = new Object()\nfields.value = \"on\"\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 2250,
+        "y": 740,
+        "wires": [
+            [
+                "a26b9d7c.81be8"
+            ]
+        ]
+    },
+    {
+        "id": "23ee4c6.0a58134",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "tags&fields",
+        "func": "tags = new Object()\ntags.grow_lamp = \"alfa\"\n\nfields = new Object()\nfields.value = \"off\"\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 2230,
+        "y": 960,
+        "wires": [
+            [
+                "1807344.25050cc"
+            ]
+        ]
+    },
+    {
+        "id": "1807344.25050cc",
+        "type": "influxdb out",
+        "z": "4c6c1450.37cd1c",
+        "influxdb": "882a6508.9d4278",
+        "name": "grow-light",
+        "measurement": "grow-light",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 2400,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "a23f6c93.1f60d",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "Night",
+        "func": "msg.tlg = `It's night. \nGrow Light should be OFF`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1510,
+        "y": 1000,
+        "wires": [
+            [
+                "24d24458.4f273c"
+            ]
+        ]
+    },
+    {
+        "id": "4ecb2eb3.f91cc",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "Shining",
+        "func": "msg.tlg = `The sun is shining in the window. \nGrow Light should be OFF`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1520,
+        "y": 940,
+        "wires": [
+            [
+                "24d24458.4f273c"
+            ]
+        ]
+    },
+    {
+        "id": "4534aaad.59025c",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "below horizon",
+        "func": "msg.tlg = `It is day, but the Sun is below the horizon. \nGrow Light should be ON`;\n\nreturn msg;\n\n ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1540,
+        "y": 800,
+        "wires": [
+            [
+                "479eeef3.191af8"
+            ]
+        ]
+    },
+    {
+        "id": "36b7ae88.052452",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "behind buildings",
+        "func": "msg.tlg = `It is day, but the Sun is behind the buildings. \nGrow Light should be ON`;\n\nreturn msg;\n\n ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1540,
+        "y": 740,
+        "wires": [
+            [
+                "479eeef3.191af8"
+            ]
+        ]
+    },
+    {
+        "id": "f66dc5d1.0b726",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "behind clouds",
+        "func": "msg.tlg = `It is day, but the Sun is behind clouds. \nGrow Light should be ON`;\n\nreturn msg;\n\n ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1540,
+        "y": 680,
+        "wires": [
+            [
+                "479eeef3.191af8"
+            ]
+        ]
+    },
+    {
+        "id": "479eeef3.191af8",
+        "type": "influxdb in",
+        "z": "4c6c1450.37cd1c",
+        "influxdb": "882a6508.9d4278",
+        "name": "last status",
+        "query": "SELECT last(\"value\") FROM \"grow-light\" WHERE (\"grow_lamp\" = 'alfa') ",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 1880,
+        "y": 740,
+        "wires": [
+            [
+                "5bc24c3e.c8b9ac"
+            ]
+        ]
+    },
+    {
+        "id": "5bc24c3e.c8b9ac",
+        "type": "switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "property": "payload[0].last",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 2010,
+        "y": 740,
+        "wires": [
+            [
+                "73b8a2c4.673914",
+                "604c8959.4a645",
+                "b1544464.229cb"
+            ],
+            [
+                "604c8959.4a645",
+                "b1544464.229cb"
+            ]
+        ]
+    },
+    {
+        "id": "77bff278.1a17f4",
+        "type": "telegram sender",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "bot": "3dd5d0a3.961e68",
+        "x": 2390,
+        "y": 680,
+        "wires": [
+            [
+                "6d11e57a.88b22c"
+            ]
+        ]
+    },
+    {
+        "id": "73b8a2c4.673914",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "msg",
+        "func": "var tlg = new Object();\n\ntlg.chatId = -461454724;\ntlg.type =  \"message\";\ntlg.content = msg.tlg;\n\nmsg.payload = tlg;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 2230,
+        "y": 680,
+        "wires": [
+            [
+                "77bff278.1a17f4"
+            ]
+        ]
+    },
+    {
+        "id": "24d24458.4f273c",
+        "type": "influxdb in",
+        "z": "4c6c1450.37cd1c",
+        "influxdb": "882a6508.9d4278",
+        "name": "last status",
+        "query": "SELECT last(\"value\") FROM \"grow-light\" WHERE (\"grow_lamp\" = 'alfa') ",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 1880,
+        "y": 960,
+        "wires": [
+            [
+                "f4a27f3b.289608"
+            ]
+        ]
+    },
+    {
+        "id": "f4a27f3b.289608",
+        "type": "switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "property": "payload[0].last",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 2010,
+        "y": 960,
+        "wires": [
+            [
+                "9b96ba05.0e745",
+                "23ee4c6.0a58134",
+                "b1544464.229cb"
+            ],
+            [
+                "23ee4c6.0a58134",
+                "b1544464.229cb"
+            ]
+        ]
+    },
+    {
+        "id": "9b96ba05.0e745",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "msg",
+        "func": "var tlg = new Object();\n\ntlg.chatId = -461454724;\ntlg.type =  \"message\";\ntlg.content = msg.tlg;\n\nmsg.payload = tlg;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 2210,
+        "y": 900,
+        "wires": [
+            [
+                "c3d9f947.108b68"
+            ]
+        ]
+    },
+    {
+        "id": "c3d9f947.108b68",
+        "type": "telegram sender",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "bot": "3dd5d0a3.961e68",
+        "x": 2370,
+        "y": 900,
+        "wires": [
+            [
+                "5d348aae.bc7e1c"
+            ]
+        ]
+    },
+    {
+        "id": "292cb629.2aeac2",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "Should be ON because:",
+        "info": "",
+        "x": 1560,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "277a981a.839478",
+        "type": "comment",
+        "z": "4c6c1450.37cd1c",
+        "name": "Should be OFF because:",
+        "info": "",
+        "x": 1570,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "b1544464.229cb",
+        "type": "debug",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2230,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "c229461c.d98558",
+        "type": "influxdb in",
+        "z": "4c6c1450.37cd1c",
+        "influxdb": "882a6508.9d4278",
+        "name": "mean level of last 15m",
+        "query": "SELECT mean(\"value\") FROM \"light\" WHERE (\"sensor\" = 'alfa') AND time > now() - 15m",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 890,
+        "y": 260,
+        "wires": [
+            [
+                "d3676818.cbf4f",
+                "ee6927d2.a613e8"
+            ]
+        ]
+    },
+    {
+        "id": "636c9c20.d2ed14",
+        "type": "inject",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 670,
+        "y": 260,
+        "wires": [
+            [
+                "c229461c.d98558"
+            ]
+        ]
+    },
+    {
+        "id": "d3676818.cbf4f",
+        "type": "debug",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload[0].mean",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1180,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "ee6927d2.a613e8",
+        "type": "switch",
+        "z": "4c6c1450.37cd1c",
+        "name": "",
+        "property": "payload[0].mean",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "10000",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1170,
+        "y": 260,
+        "wires": [
+            [
+                "d2178b96.dbb17"
+            ],
+            [
+                "c0dbe527.346df"
+            ]
+        ]
+    },
+    {
+        "id": "683afd98.60a7b4",
+        "type": "mqtt out",
+        "z": "4c6c1450.37cd1c",
+        "name": "ON/OFF",
+        "topic": "izm/south-balcony/main-device",
+        "qos": "1",
+        "retain": "",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 2820,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "5d348aae.bc7e1c",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "relay_1_off",
+        "func": "msg.payload = \"relay_1_off\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 2590,
+        "y": 900,
+        "wires": [
+            [
+                "683afd98.60a7b4"
+            ]
+        ]
+    },
+    {
+        "id": "6d11e57a.88b22c",
+        "type": "function",
+        "z": "4c6c1450.37cd1c",
+        "name": "relay_1_on",
+        "func": "msg.payload = \"relay_1_on\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 2590,
+        "y": 680,
+        "wires": [
+            [
+                "683afd98.60a7b4"
+            ]
+        ]
+    },
+    {
+        "id": "d9f05235.a14ae8",
+        "type": "position-config",
+        "z": "",
+        "name": "Izmailovo",
+        "isValide": "true",
+        "longitude": "0",
+        "latitude": "0",
+        "angleType": "deg",
+        "timeZoneOffset": "99",
+        "timeZoneDST": "0",
+        "stateTimeFormat": "3",
+        "stateDateFormat": "12"
+    },
+    {
+        "id": "882a6508.9d4278",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "cacti",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    },
+    {
+        "id": "3dd5d0a3.961e68",
+        "type": "telegram bot",
+        "z": "",
+        "botname": "CactiEnvNR_bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "d8f0d2bb.f954a8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mosquitto [docker]",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]

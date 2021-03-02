@@ -1,0 +1,121 @@
+[
+    {
+        "id": "da3adc53.5a6d08",
+        "type": "tab",
+        "label": "informer",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "bb03056a.07fa2",
+        "type": "influxdb in",
+        "z": "da3adc53.5a6d08",
+        "influxdb": "882a6508.9d4278",
+        "name": "avg P value 24h ago",
+        "query": "SELECT MEAN(\"value\")  FROM \"preassure\" WHERE  \"time\" > now() - 25h AND \"time\" < now() - 23h GROUP BY *",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 360,
+        "y": 100,
+        "wires": [
+            [
+                "28204645.dd9702"
+            ]
+        ]
+    },
+    {
+        "id": "91331593.670e9",
+        "type": "inject",
+        "z": "da3adc53.5a6d08",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "bb03056a.07fa2"
+            ]
+        ]
+    },
+    {
+        "id": "8102217c.4ab21",
+        "type": "mqtt out",
+        "z": "da3adc53.5a6d08",
+        "name": "pressure-yesterday",
+        "topic": "izm/south-balcony/pressure-yesterday",
+        "qos": "",
+        "retain": "",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 810,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "28204645.dd9702",
+        "type": "function",
+        "z": "da3adc53.5a6d08",
+        "name": "",
+        "func": "msg.payload = msg.payload[0].mean\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 560,
+        "y": 100,
+        "wires": [
+            [
+                "8102217c.4ab21"
+            ]
+        ]
+    },
+    {
+        "id": "882a6508.9d4278",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "cacti",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    },
+    {
+        "id": "d8f0d2bb.f954a8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mosquitto [docker]",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]

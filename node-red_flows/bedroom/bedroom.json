@@ -1,0 +1,422 @@
+[
+    {
+        "id": "e0d28bfd.76a19",
+        "type": "tab",
+        "label": "bedroom",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "37b89922.c1e9ae",
+        "type": "mqtt in",
+        "z": "e0d28bfd.76a19",
+        "name": "T",
+        "topic": "izm/bedroom/temperature",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "ba704d3e.391a7"
+            ]
+        ]
+    },
+    {
+        "id": "2ebf2019.07f67",
+        "type": "mqtt in",
+        "z": "e0d28bfd.76a19",
+        "name": "P",
+        "topic": "izm/bedroom/pressure",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "fbb72975.9250b"
+            ]
+        ]
+    },
+    {
+        "id": "56f1077d.bda878",
+        "type": "mqtt in",
+        "z": "e0d28bfd.76a19",
+        "name": "H",
+        "topic": "izm/bedroom/humidity",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "d8f0d2bb.f954a8",
+        "x": 150,
+        "y": 500,
+        "wires": [
+            [
+                "cc2cdce9.4e28b8"
+            ]
+        ]
+    },
+    {
+        "id": "ba704d3e.391a7",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "Str to Num + Calibration",
+        "func": "msg.payload = Number(msg.payload)-2;  // calibration -2 degress\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 370,
+        "y": 160,
+        "wires": [
+            [
+                "9ef89554.67c518"
+            ]
+        ]
+    },
+    {
+        "id": "fbb72975.9250b",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 330,
+        "y": 320,
+        "wires": [
+            [
+                "47528242.2c08ac",
+                "ca7e201.fcc076"
+            ]
+        ]
+    },
+    {
+        "id": "9ef89554.67c518",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.room = \"bedroom\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 690,
+        "y": 160,
+        "wires": [
+            [
+                "e9f03275.25df78",
+                "b0b7250c.2ca6c"
+            ]
+        ]
+    },
+    {
+        "id": "e9f03275.25df78",
+        "type": "influxdb out",
+        "z": "e0d28bfd.76a19",
+        "influxdb": "11f4ee1a.bf022a",
+        "name": "temperature",
+        "measurement": "temperature",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 990,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "13a3d4ed.98c2c3",
+        "type": "influxdb out",
+        "z": "e0d28bfd.76a19",
+        "influxdb": "11f4ee1a.bf022a",
+        "name": "pressure",
+        "measurement": "pressure",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 980,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "cc2cdce9.4e28b8",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "Str to Num",
+        "func": "msg.payload = Number(msg.payload); \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 330,
+        "y": 500,
+        "wires": [
+            [
+                "1b6b9f7e.5cb709",
+                "77bcacd9.879514"
+            ]
+        ]
+    },
+    {
+        "id": "4de9efb9.1559c8",
+        "type": "influxdb out",
+        "z": "e0d28bfd.76a19",
+        "influxdb": "11f4ee1a.bf022a",
+        "name": "humidity",
+        "measurement": "humidity",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 980,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b0b7250c.2ca6c",
+        "type": "debug",
+        "z": "e0d28bfd.76a19",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "47528242.2c08ac",
+        "type": "debug",
+        "z": "e0d28bfd.76a19",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "1b6b9f7e.5cb709",
+        "type": "debug",
+        "z": "e0d28bfd.76a19",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "77bcacd9.879514",
+        "type": "switch",
+        "z": "e0d28bfd.76a19",
+        "name": "filter ",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "100",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 530,
+        "y": 500,
+        "wires": [
+            [
+                "d042be78.3dd9b"
+            ],
+            [
+                "91eb3361.b39d4"
+            ]
+        ]
+    },
+    {
+        "id": "9d627211.427ea",
+        "type": "e-mail",
+        "z": "e0d28bfd.76a19",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": false,
+        "name": "d.natxa@gmail.com",
+        "dname": "",
+        "x": 1020,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "91eb3361.b39d4",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "Email topic",
+        "func": "msg.topic = \"Bedroom: BME280 humidity strange value\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 560,
+        "wires": [
+            [
+                "9d627211.427ea"
+            ]
+        ]
+    },
+    {
+        "id": "eeba4e04.2e6ed8",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "Email topic",
+        "func": "msg.topic = \"bedroom: BME280 pressure strange value\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 380,
+        "wires": [
+            [
+                "1d9cb9b2.541206"
+            ]
+        ]
+    },
+    {
+        "id": "ca7e201.fcc076",
+        "type": "switch",
+        "z": "e0d28bfd.76a19",
+        "name": "filter ",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "600",
+                "vt": "num",
+                "v2": "800",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 530,
+        "y": 320,
+        "wires": [
+            [
+                "510372f4.44e69c"
+            ],
+            [
+                "eeba4e04.2e6ed8"
+            ]
+        ]
+    },
+    {
+        "id": "1d9cb9b2.541206",
+        "type": "e-mail",
+        "z": "e0d28bfd.76a19",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": false,
+        "name": "d.natxa@gmail.com",
+        "dname": "",
+        "x": 1020,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "510372f4.44e69c",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.room = \"bedroom\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 320,
+        "wires": [
+            [
+                "13a3d4ed.98c2c3"
+            ]
+        ]
+    },
+    {
+        "id": "d042be78.3dd9b",
+        "type": "function",
+        "z": "e0d28bfd.76a19",
+        "name": "tags&fields",
+        "func": "value = msg.payload\n\ntags = new Object()\ntags.room = \"bedroom\"\n\nfields = new Object()\nfields.value = value\n\nmsg.payload = [fields, tags]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 500,
+        "wires": [
+            [
+                "4de9efb9.1559c8"
+            ]
+        ]
+    },
+    {
+        "id": "d8f0d2bb.f954a8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mosquitto [docker]",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "11f4ee1a.bf022a",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "home",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    }
+]
